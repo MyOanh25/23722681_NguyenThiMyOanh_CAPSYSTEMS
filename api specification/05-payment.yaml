@@ -1,1 +1,145 @@
+openapi: 3.0.3
+info:
+  title: CAB System API
+  version: 1.0.0
+  description: API được phát sinh từ FR/AC trong tài liệu phân tích thiết kế CAB System.
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local
 
+tags:
+  - name: Payment
+    description: FR13-FR15, AC07-AC08
+
+paths:
+  /trips/{tripId}/fare:
+    get:
+      tags: [Payment]
+      summary: Tính tiền cước
+      description: FR13, AC07
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: tripId, in: path, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Tính cước thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tripId: {type: string}
+                  fare: {type: number, format: double}
+  /trips/{tripId}/payments:
+    post:
+      tags: [Payment]
+      summary: Thanh toán chuyến xe
+      description: FR14, BRU03, AC08
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: tripId, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [paymentMethod]
+              properties:
+                paymentMethod: {type: string, enum: [CASH, ELECTRONIC]}
+      responses:
+        '200':
+          description: Thanh toán thành công
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Payment'}
+        '402': {description: Thanh toán điện tử thất bại}
+  /payments/{paymentId}/retry:
+    post:
+      tags: [Payment]
+      summary: Thanh toán lại
+      description: FR15, EXC03, AC08
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: paymentId, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Thanh toán lại thành công}
+        '402': {description: Thanh toán tiếp tục thất bại}
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        code: {type: string, example: INVALID_REQUEST}
+        message: {type: string, example: Dữ liệu không hợp lệ}
+    RegisterRequest:
+      type: object
+      required: [fullName, phone, password, role]
+      properties:
+        fullName: {type: string}
+        phone: {type: string}
+        password: {type: string, format: password}
+        role: {type: string, enum: [CUSTOMER, DRIVER]}
+    LoginRequest:
+      type: object
+      required: [phone, password]
+      properties:
+        phone: {type: string}
+        password: {type: string, format: password}
+    TripRequest:
+      type: object
+      required: [pickupLocation, destination, vehicleType]
+      properties:
+        pickupLocation: {type: string}
+        destination: {type: string}
+        vehicleType: {type: string}
+    Trip:
+      type: object
+      properties:
+        tripId: {type: string, example: CD001}
+        customerId: {type: string, example: KH001}
+        driverId: {type: string, nullable: true, example: TX001}
+        pickupLocation: {type: string}
+        destination: {type: string}
+        vehicleType: {type: string}
+        status:
+          type: string
+          enum: [SEARCHING_DRIVER, DRIVER_ACCEPTED, DRIVER_ARRIVED, PASSENGER_PICKED_UP, IN_PROGRESS, COMPLETED]
+        fare: {type: number, format: double, nullable: true}
+        estimatedArrival: {type: integer, nullable: true, description: Phút}
+    Driver:
+      type: object
+      properties:
+        driverId: {type: string}
+        fullName: {type: string}
+        phone: {type: string}
+        status: {type: string, enum: [AVAILABLE, BUSY]}
+        latitude: {type: number, format: double, nullable: true}
+        longitude: {type: number, format: double, nullable: true}
+    Vehicle:
+      type: object
+      properties:
+        vehicleId: {type: string}
+        licensePlate: {type: string}
+        vehicleType: {type: string}
+    Payment:
+      type: object
+      properties:
+        paymentId: {type: string}
+        tripId: {type: string}
+        amount: {type: number, format: double}
+        paymentMethod: {type: string, enum: [CASH, ELECTRONIC]}
+        status: {type: string, enum: [PENDING, SUCCESS, FAILED]}
+    RatingRequest:
+      type: object
+      required: [score]
+      properties:
+        score: {type: integer, minimum: 1, maximum: 5}
+        comment: {type: string}
