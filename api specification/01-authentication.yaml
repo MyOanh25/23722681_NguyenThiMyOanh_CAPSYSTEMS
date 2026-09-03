@@ -1,1 +1,120 @@
+openapi: 3.0.3
+info:
+  title: CAB System API
+  version: 1.0.0
+  description: API được phát sinh từ FR/AC trong tài liệu phân tích thiết kế CAB System.
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local
+
+tags:
+  - name: Authentication
+    description: FR01 / AC01
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Đăng ký tài khoản
+      description: FR01, AC01
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/RegisterRequest'}
+      responses:
+        '201': {description: Đăng ký thành công}
+        '400': {description: Dữ liệu không hợp lệ}
+        '409': {description: Tài khoản đã tồn tại}
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Đăng nhập
+      description: FR01, AC01
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/LoginRequest'}
+      responses:
+        '200': {description: Đăng nhập thành công}
+        '401': {description: Sai thông tin đăng nhập}
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        code: {type: string, example: INVALID_REQUEST}
+        message: {type: string, example: Dữ liệu không hợp lệ}
+    RegisterRequest:
+      type: object
+      required: [fullName, phone, password, role]
+      properties:
+        fullName: {type: string}
+        phone: {type: string}
+        password: {type: string, format: password}
+        role: {type: string, enum: [CUSTOMER, DRIVER]}
+    LoginRequest:
+      type: object
+      required: [phone, password]
+      properties:
+        phone: {type: string}
+        password: {type: string, format: password}
+    TripRequest:
+      type: object
+      required: [pickupLocation, destination, vehicleType]
+      properties:
+        pickupLocation: {type: string}
+        destination: {type: string}
+        vehicleType: {type: string}
+    Trip:
+      type: object
+      properties:
+        tripId: {type: string, example: CD001}
+        customerId: {type: string, example: KH001}
+        driverId: {type: string, nullable: true, example: TX001}
+        pickupLocation: {type: string}
+        destination: {type: string}
+        vehicleType: {type: string}
+        status:
+          type: string
+          enum: [SEARCHING_DRIVER, DRIVER_ACCEPTED, DRIVER_ARRIVED, PASSENGER_PICKED_UP, IN_PROGRESS, COMPLETED]
+        fare: {type: number, format: double, nullable: true}
+        estimatedArrival: {type: integer, nullable: true, description: Phút}
+    Driver:
+      type: object
+      properties:
+        driverId: {type: string}
+        fullName: {type: string}
+        phone: {type: string}
+        status: {type: string, enum: [AVAILABLE, BUSY]}
+        latitude: {type: number, format: double, nullable: true}
+        longitude: {type: number, format: double, nullable: true}
+    Vehicle:
+      type: object
+      properties:
+        vehicleId: {type: string}
+        licensePlate: {type: string}
+        vehicleType: {type: string}
+    Payment:
+      type: object
+      properties:
+        paymentId: {type: string}
+        tripId: {type: string}
+        amount: {type: number, format: double}
+        paymentMethod: {type: string, enum: [CASH, ELECTRONIC]}
+        status: {type: string, enum: [PENDING, SUCCESS, FAILED]}
+    RatingRequest:
+      type: object
+      required: [score]
+      properties:
+        score: {type: integer, minimum: 1, maximum: 5}
+        comment: {type: string}
 
