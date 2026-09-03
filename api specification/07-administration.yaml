@@ -1,1 +1,146 @@
+openapi: 3.0.3
+info:
+  title: CAB System API
+  version: 1.0.0
+  description: API được phát sinh từ FR/AC trong tài liệu phân tích thiết kế CAB System.
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local
 
+tags:
+  - name: Administration
+    description: FR19-FR21, BRU04-BRU05
+
+paths:
+  /admin/customers:
+    get:
+      tags: [Administration]
+      summary: Quản lý khách hàng
+      description: FR19, BR09
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Danh sách khách hàng}
+        '403': {description: Không có quyền}
+  /admin/drivers:
+    get:
+      tags: [Administration]
+      summary: Quản lý tài xế
+      description: FR19, BR09
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Danh sách tài xế}
+        '403': {description: Không có quyền}
+  /admin/vehicles:
+    get:
+      tags: [Administration]
+      summary: Quản lý phương tiện
+      description: FR19, BR09
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Danh sách phương tiện}
+        '403': {description: Không có quyền}
+  /admin/trips:
+    get:
+      tags: [Administration]
+      summary: Quản lý và giám sát chuyến xe
+      description: FR19, BR09
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Danh sách chuyến xe}
+        '403': {description: Không có quyền}
+  /admin/audit-logs:
+    get:
+      tags: [Administration]
+      summary: Tra cứu audit log
+      description: FR20, BRU05
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Nhật ký thao tác}
+        '403': {description: Không có quyền}
+  /admin/reports:
+    get:
+      tags: [Administration]
+      summary: Báo cáo thống kê
+      description: FR21
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Báo cáo doanh thu, chuyến, tỷ lệ hoàn thành/hủy và hiệu quả tài xế}
+        '403': {description: Không có quyền}
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        code: {type: string, example: INVALID_REQUEST}
+        message: {type: string, example: Dữ liệu không hợp lệ}
+    RegisterRequest:
+      type: object
+      required: [fullName, phone, password, role]
+      properties:
+        fullName: {type: string}
+        phone: {type: string}
+        password: {type: string, format: password}
+        role: {type: string, enum: [CUSTOMER, DRIVER]}
+    LoginRequest:
+      type: object
+      required: [phone, password]
+      properties:
+        phone: {type: string}
+        password: {type: string, format: password}
+    TripRequest:
+      type: object
+      required: [pickupLocation, destination, vehicleType]
+      properties:
+        pickupLocation: {type: string}
+        destination: {type: string}
+        vehicleType: {type: string}
+    Trip:
+      type: object
+      properties:
+        tripId: {type: string, example: CD001}
+        customerId: {type: string, example: KH001}
+        driverId: {type: string, nullable: true, example: TX001}
+        pickupLocation: {type: string}
+        destination: {type: string}
+        vehicleType: {type: string}
+        status:
+          type: string
+          enum: [SEARCHING_DRIVER, DRIVER_ACCEPTED, DRIVER_ARRIVED, PASSENGER_PICKED_UP, IN_PROGRESS, COMPLETED]
+        fare: {type: number, format: double, nullable: true}
+        estimatedArrival: {type: integer, nullable: true, description: Phút}
+    Driver:
+      type: object
+      properties:
+        driverId: {type: string}
+        fullName: {type: string}
+        phone: {type: string}
+        status: {type: string, enum: [AVAILABLE, BUSY]}
+        latitude: {type: number, format: double, nullable: true}
+        longitude: {type: number, format: double, nullable: true}
+    Vehicle:
+      type: object
+      properties:
+        vehicleId: {type: string}
+        licensePlate: {type: string}
+        vehicleType: {type: string}
+    Payment:
+      type: object
+      properties:
+        paymentId: {type: string}
+        tripId: {type: string}
+        amount: {type: number, format: double}
+        paymentMethod: {type: string, enum: [CASH, ELECTRONIC]}
+        status: {type: string, enum: [PENDING, SUCCESS, FAILED]}
+    RatingRequest:
+      type: object
+      required: [score]
+      properties:
+        score: {type: integer, minimum: 1, maximum: 5}
+        comment: {type: string}
