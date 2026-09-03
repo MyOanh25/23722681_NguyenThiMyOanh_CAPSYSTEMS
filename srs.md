@@ -268,52 +268,128 @@ Bên cạnh các tính năng sử dụng trực tiếp, hệ thống CAB System 
 | **NFR07** | Khả năng truy vết (Auditability) | Lưu vết hệ thống (Logging) | Doanh nghiệp yêu cầu hệ thống phải lưu vết (log) toàn bộ các thao tác quan trọng để phục vụ quá trình kiểm tra, đối soát khi có sự cố xảy ra[cite: 1]. |
 
 ```
-Bước 11: Vẽ các usecase, ký hiệu UC01 tên là customer trong đó sẽ có gì, thiết kế cái usecase diagram,
 ### Bước 11: Xác định Use Case và Sơ đồ Use Case Diagram
 
 #### 11.1. Danh sách Use Case
 
-| Mã Nhóm | Tác nhân | Các Use Case chi tiết |
-| :--- | :--- | :--- |
-| **UC01** | **Customer (Khách hàng)** | Đăng ký, cập nhật thông tin cá nhân, đặt chuyến xe, theo dõi hành trình, thanh toán và đánh giá tài xế[cite: 1]. |
-| **UC02** | **Driver (Tài xế)** | Cập nhật hồ sơ phương tiện, quản lý trạng thái sẵn sàng, tiếp nhận chuyến và cập nhật trạng thái di chuyển[cite: 1]. |
-| **UC03** | **Admin (Nhân viên vận hành)** | Quản lý thông tin người dùng, hỗ trợ xử lý lỗi giao dịch và xem báo cáo hoạt động[cite: 1]. |
+| Mã UC | Tên Use Case | Actor chính |
+|---|---|---|
+| **UC01** | Đăng ký/Quản lý tài khoản khách hàng | Customer[cite: 1] |
+| **UC02** | Đặt chuyến xe | Customer[cite: 1] |
+| **UC03** | Theo dõi chuyến xe | Customer[cite: 1] |
+| **UC04** | Xem lịch sử chuyến xe | Customer[cite: 1] |
+| **UC05** | Đánh giá tài xế | Customer[cite: 1] |
+| **UC06** | Quản lý tài khoản và phương tiện tài xế | Driver[cite: 1] |
+| **UC07** | Nhận/Từ chối chuyến xe | Driver[cite: 1] |
+| **UC08** | Cập nhật trạng thái chuyến xe | Driver[cite: 1] |
+| **UC09** | Cập nhật vị trí tài xế | Driver[cite: 1] |
+| **UC10** | Quản lý khách hàng | Operations Staff[cite: 1] |
+| **UC11** | Quản lý tài xế và phương tiện | Operations Staff[cite: 1] |
+| **UC12** | Quản lý và giám sát chuyến xe | Operations Staff[cite: 1] |
+| **UC13** | Tra cứu lịch sử giao dịch | Operations Staff[cite: 1] |
+| **UC14** | Thanh toán chuyến xe | Customer[cite: 1] |
 
-#### 11.2. Sơ đồ Use Case Diagram (Mô hình hóa bằng Mermaid)
+#### 11.2. Sơ đồ Use Case Diagram
 
 ```mermaid
 flowchart LR
-    KH["👤 Khách hàng"]
-    TX["👤 Tài xế"]
-    NV["👤 Nhân viên vận hành"]
+    Customer["👤 Customer"]
+    Driver["👤 Driver"]
+    Staff["👤 Operations Staff"]
+    PaymentProvider["🏢 Payment Provider"]
 
-    subgraph CAB["Hệ thống đặt xe CAB"]
+    subgraph CAB["CAB SYSTEM"]
         direction TB
-        C1("Quản lý tài khoản KH")
-        C2("Đặt chuyến xe")
-        C3("Theo dõi & Thanh toán")
-        C4("Lịch sử & Đánh giá")
-
-        D1("Quản lý trạng thái xe")
-        D2("Tiếp nhận chuyến")
-        D3("Cập nhật hành trình")
-
-        A1("Quản lý danh mục")
-        A2("Báo cáo & Xử lý lỗi")
+        UC01("UC01: Đăng ký / Quản lý TK khách hàng")
+        UC02("UC02: Đặt chuyến xe")
+        UC03("UC03: Theo dõi chuyến xe")
+        UC04("UC04: Xem lịch sử chuyến xe")
+        UC05("UC05: Đánh giá tài xế")
+        
+        UC06("UC06: Quản lý TK và xe tài xế")
+        UC07("UC07: Nhận / Từ chối chuyến xe")
+        UC08("UC08: Cập nhật trạng thái chuyến")
+        UC09("UC09: Cập nhật vị trí tài xế")
+        
+        UC10("UC10: Quản lý khách hàng")
+        UC11("UC11: Quản lý tài xế và xe")
+        UC12("UC12: Quản lý & giám sát chuyến")
+        UC13("UC13: Tra cứu lịch sử giao dịch")
+        
+        UC14("UC14: Thanh toán chuyến xe")
     end
 
-    KH --- C1
-    KH --- C2
-    KH --- C3
-    KH --- C4
+    Customer --- UC01
+    Customer --- UC02
+    Customer --- UC03
+    Customer --- UC04
+    Customer --- UC05
+    Customer --- UC14
 
-    TX --- C1
-    TX --- D1
-    TX --- D2
-    TX --- D3
+    Driver --- UC06
+    Driver --- UC07
+    Driver --- UC08
+    Driver --- UC09
 
-    NV --- A1
-    NV --- A2
+    Staff --- UC10
+    Staff --- UC11
+    Staff --- UC12
+    Staff --- UC13
+
+    PaymentProvider --- UC14
+```
+
+### Bước 12: Đặc tả Use Case
+
+**Đặc tả UC02 – Đặt chuyến xe**
+
+| Thành phần | Nội dung |
+|---|---|
+| **Mã UC** | UC02 |
+| **Tên** | Đặt chuyến xe |
+| **Actor** | Customer |
+| **Mục tiêu** | Cho phép khách hàng tạo yêu cầu đặt xe[cite: 1]. |
+| **Tiền điều kiện** | Customer đã đăng nhập vào hệ thống[cite: 1]. |
+| **Luồng chính** | 1. Khách hàng nhập điểm đón[cite: 1].<br>2. Khách hàng nhập điểm đến[cite: 1].<br>3. Khách hàng chọn loại xe[cite: 1].<br>4. Khách hàng gửi yêu cầu đặt xe[cite: 1].<br>5. Hệ thống tiếp nhận yêu cầu[cite: 1].<br>6. Hệ thống thông báo trạng thái đang tìm tài xế[cite: 1].<br>7. Hệ thống bắt đầu tìm tài xế phù hợp[cite: 1]. |
+| **Ngoại lệ** | Không tìm được tài xế phù hợp → hệ thống thông báo rõ ràng cho khách hàng[cite: 1]. |
+| **Kết quả** | Yêu cầu đặt xe được tạo và chuyển sang quá trình tìm tài xế[cite: 1]. |
+
+### Bước 13: Tiêu chí chấp nhận (Acceptance Criteria - AC)
+
+| Mã AC | Liên kết BR | Tiêu chí chấp nhận (Hệ thống được nghiệm thu khi...) |
+|---|---|---|
+| **AC01** | BR01 | Khách hàng đăng ký thành công tài khoản mới, đăng nhập và cập nhật được thông tin[cite: 1]. |
+| **AC02** | BR02 | Tài xế cập nhật được hồ sơ, phương tiện, trạng thái và hệ thống lưu trữ chính xác[cite: 1]. |
+| **AC03** | BR03 | Khách hàng nhập đủ điểm đón, đến, loại xe và nhấn gửi thì hệ thống tạo yêu cầu thành công[cite: 1]. |
+| **AC04** | BR04 | Hệ thống quét tài xế gần nhất; nếu tài xế từ chối thì tự tìm người khác; nếu không có ai thì báo lỗi minh bạch[cite: 1]. |
+| **AC05** | BR05 | Tài xế nhận chuyến và cập nhật đủ 4 trạng thái: đã đến, đã đón, đang di chuyển, hoàn thành[cite: 1]. |
+| **AC06** | BR06 | Khách hàng xem được vị trí tài xế, tiến trình chuyến và thời gian đến dự kiến[cite: 1]. |
+| **AC07** | BR07 | Hệ thống tự tính đúng cước phí dựa trên loại dịch vụ khi chuyến hoàn thành[cite: 1]. |
+| **AC08** | BR08 | Khách hàng thanh toán được; nếu thanh toán điện tử lỗi bên thứ 3 thì thông báo và cho xử lý thanh toán lại[cite: 1]. |
+
+### Bước 14: Ma trận truy xuất nguồn gốc yêu cầu (RTM)
+
+| BG | BR | FR | UC | AC |
+|---|---|---|---|---|
+| **BG01** | BR04 | FR09 – Tìm tài xế phù hợp | UC02 – Đặt chuyến xe | AC04 |
+| BG01 | BR04 | FR10 – Gửi yêu cầu nhận chuyến | UC02 – Đặt chuyến xe | AC04 |
+| BG01 | BR04 | FR11 – Xử lý tài xế không nhận chuyến | UC07 – Nhận/Từ chối chuyến xe | AC04 |
+| **BG02** | BR06 | FR16 – Theo dõi trạng thái chuyến | UC03 – Theo dõi chuyến xe | AC06 |
+| **BG03** | BR07 | FR19 – Tính số tiền phải trả | UC14 – Thanh toán chuyến xe | AC07 |
+| BG03 | BR08 | FR21 – Thanh toán điện tử | UC14 – Thanh toán chuyến xe | AC08 |
+| **BG05** | BR11 | FR29 – Quản lý chuyến đi | UC12 – Quản lý & giám sát chuyến xe | AC11 |
+| **BG01-05**| BR03 | FR07 – Nhập thông tin chuyến xe | UC02 – Đặt chuyến xe | AC03 |
+| BG01-05| BR05 | FR15 – Cập nhật trạng thái chuyến | UC08 – Cập nhật trạng thái chuyến xe | AC05 |
+
+### Bước 15: Kịch bản kiểm thử (Test Cases)
+
+| Mã TC | UC/AC Liên kết | Tên kịch bản kiểm thử | Các bước thực hiện | Kết quả mong đợi |
+|---|---|---|---|---|
+| **TC01** | UC02 / AC03 | Đặt chuyến thành công | 1. KH nhập điểm đón, điểm đến, chọn xe.<br>2. Bấm "Gửi yêu cầu đặt xe". | Hệ thống tiếp nhận yêu cầu, hiện màn hình "Đang tìm tài xế"[cite: 1]. |
+| **TC02** | UC02 / AC03 | Báo lỗi khi thiếu dữ liệu | 1. KH chỉ nhập điểm đón, bỏ trống điểm đến.<br>2. Bấm "Gửi yêu cầu". | Nút gửi bị vô hiệu hóa hoặc hệ thống cảnh báo lỗi bắt buộc nhập điểm đến. |
+| **TC03** | UC07 / AC04 | Xử lý khi tài xế từ chối chuyến | 1. Hệ thống gửi yêu cầu chuyến cho Tài xế A.<br>2. Tài xế A bấm "Từ chối". | Hệ thống tự động chuyển yêu cầu sang Tài xế B phù hợp tiếp theo mà không bắt khách tạo lại chuyến[cite: 1]. |
+| **TC04** | UC14 / AC08 | Xử lý thanh toán điện tử lỗi | 1. KH chọn thanh toán thẻ.<br>2. API đối tác trả về lỗi. | Hệ thống báo giao dịch thất bại và hiển thị tùy chọn cho phép xử lý lại theo chính sách[cite: 1]. |
+| **TC05** | UC08 / AC05 | Cập nhật hoàn thành hành trình | 1. Tài xế bấm "Hoàn thành chuyến". | App KH hiện trạng thái hoàn thành, chuyển sang luồng tính cước và đánh giá[cite: 1]. |
 ```
 Bước 12: sau đó đặc tả usecase 
 Bước 13: Những tiêu chí chấp nhận, case ký hiệu là AC. Để tập hợp điều kiện quy tắc cụ thể mà 1 tính năng cần đáp ứng để giúp người làm phần mềm xác định khi nào người làm phần mềm cần kết thúc và nghiệm thu,
