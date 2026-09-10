@@ -1,397 +1,922 @@
-Bước 1: Xây dựng hệ thống cơ bản mvb. Đọc và phân tích yêu cầu của khách hàng ở giai đoạn sơ khởi - hiểu được business contact (ngữ cảnh của nghiệp vụ) và vấn đề của nghiệp vụ. Tại sao làm mới, ai sẽ tham gia.
+# Phân tích thiết kế hệ thống MVB - CAB System
 
-### 1. Ngữ cảnh của nghiệp vụ
-Công ty ABC là một doanh nghiệp đang hoạt động trong lĩnh vực cung cấp dịch vụ đặt xe trực tuyến[cite: 1]. Ở thời điểm hiện tại, khách hàng của công ty liên hệ đặt xe thông qua tổng đài hoặc sử dụng một ứng dụng đơn giản[cite: 1]. 
+# Bước 1: Đọc và phân tích sơ khởi yêu cầu khách hàng (Business Context)
 
-### 2. Vấn đề nghiệp vụ
-Hệ thống và quy trình vận hành hiện tại của ABC đang bộc lộ nhiều hạn chế lớn cản trở sự phát triển:
-* Việc phân công và điều phối tài xế chủ yếu được thực hiện bằng phương pháp thủ công[cite: 1].
-* Khách hàng gặp khó khăn trong việc theo dõi trạng thái chuyến đi sau khi đặt[cite: 1].
-* Thông tin thanh toán không được quản lý một cách tập trung[cite: 1].
-* Bộ phận vận hành gặp rào cản lớn khi muốn mở rộng quy mô hệ thống[cite: 1].
+## 1. Bối cảnh nghiệp vụ (Business Context)
 
-### 3. Tại sao làm mới?
-Ban lãnh đạo công ty ABC quyết định đầu tư xây dựng một nền tảng CAB System hoàn toàn mới nhằm:
-* Có khả năng phục vụ số lượng lớn khách hàng và tài xế cùng lúc với độ ổn định cao[cite: 1].
-* Sở hữu kiến trúc hệ thống linh hoạt, cho phép các thành phần (như thanh toán, thông báo) mở rộng độc lập khi tải tăng mà không làm sập toàn bộ hệ thống nếu có lỗi cục bộ[cite: 1].
-* Đảm bảo khả năng mở rộng trong tương lai: dễ dàng bổ sung các loại dịch vụ mới, phương thức thanh toán mới, hoặc thay đổi các thành phần kỹ thuật mà không cần phải đập đi xây lại toàn bộ[cite: 1].
+Công ty ABC là doanh nghiệp cung cấp dịch vụ đặt xe trực tuyến. Hiện tại, khách hàng có thể yêu cầu xe thông qua tổng đài hoặc một ứng dụng đơn giản.
 
-### 4. Ai sẽ tham gia?
-Hệ thống mới sẽ phục vụ ba nhóm người dùng (Actors) chính yếu[cite: 1]:
-* **Khách hàng:** Người có nhu cầu đặt xe, theo dõi chuyến đi, thanh toán và đánh giá dịch vụ[cite: 1].
-* **Tài xế:** Người tiếp nhận yêu cầu đặt xe, thực hiện chuyến đi và liên tục cập nhật trạng thái/vị trí[cite: 1].
-* **Nhân viên vận hành (Quản trị viên):** Người quản lý tổng thể nền tảng (người dùng, phương tiện, chuyến đi), hỗ trợ xử lý sự cố và theo dõi các báo cáo hiệu quả hoạt động kinh doanh[cite: 1].
-1. Ngữ cảnh của nghiệp vụ (Business Context)
-Công ty ABC là một doanh nghiệp đang hoạt động trong lĩnh vực cung cấp dịch vụ đặt xe trực tuyến.  Ở thời điểm hiện tại, khách hàng của công ty yêu cầu xe bằng cách liên hệ trực tiếp với tổng đài hoặc thông qua một ứng dụng đơn giản.  Ban giám đốc kỳ vọng xây dựng một nền tảng mới hỗ trợ tối thiểu ba nhóm người dùng chính bao gồm: khách hàng, tài xế và nhân viên vận hành.  Doanh nghiệp mong muốn nền tảng CAB mới này có khả năng phục vụ một số lượng lớn khách hàng và tài xế, đồng thời linh hoạt để phát triển thêm các tính năng trong tương lai.
-3. Vấn đề của nghiệp vụ (Business Problems)
-Hệ thống và quy trình hiện tại đang bộc lộ nhiều điểm nghẽn cản trở sự phát triển của công ty ABC:Điều phối thiếu tự động hóa: Khâu phân công tài xế chủ yếu vẫn đang được thực hiện một cách thủ công.  Trải nghiệm theo dõi chuyến đi hạn chế: Khách hàng gặp khó khăn trong việc theo dõi trạng thái chuyến đi của mình.  Quản lý dữ liệu phân tán: Thông tin thanh toán trong hệ thống hiện hành chưa được quản lý một cách tập trung.  Rào cản về khả năng mở rộng: Bộ phận vận hành gặp nhiều khó khăn mỗi khi muốn mở rộng quy mô của hệ thống.  Rủi ro gián đoạn toàn hệ thống (Single point of failure): Doanh nghiệp đối mặt với rủi ro lớn khi một lỗi xảy ra ở chức năng thanh toán hoặc thông báo có thể làm cho toàn bộ hệ thống đặt xe ngừng hoạt động.
+Tuy nhiên, quy trình vận hành hiện tại còn tồn tại nhiều hạn chế như việc tìm kiếm và phân công tài xế chủ yếu thực hiện thủ công, khách hàng gặp khó khăn trong việc theo dõi trạng thái chuyến đi, thông tin thanh toán chưa được quản lý tập trung và bộ phận vận hành gặp khó khăn khi số lượng khách hàng, tài xế ngày càng tăng.
 
+Công ty ABC mong muốn xây dựng hệ thống **CAB System** - nền tảng đặt xe nhằm hỗ trợ toàn bộ quy trình nghiệp vụ từ khi khách hàng tạo yêu cầu đặt xe, hệ thống tìm kiếm tài xế, tài xế thực hiện chuyến đi, tính cước, thanh toán, gửi thông báo và đánh giá sau chuyến.
 
-Bước 2: Xác định các stakeholders, những bên liên quan. Lọc bảng 2 cột. Cột 1 tên stakeholders, Cột 2 là vai trò. Vẽ ma trận stakeholders magic. cho biết tầm ảnh hưởng của stakeholder trong hệ thống bằng công cụ mermaid - dùng để vẽ có sơ đồ lượt đồ trong markdown.
+Hệ thống được xây dựng theo hướng **MVB/MVP (Minimum Viable Business/Product)**, tập trung vào các nghiệp vụ quan trọng nhất để giải quyết vấn đề hiện tại của doanh nghiệp, đồng thời có khả năng mở rộng trong tương lai.
 
+---
 
-### Bước 2: Xác định các stakeholders, những bên liên quan
+## 2. Vấn đề nghiệp vụ hiện tại (Business Problems)
 
-| Tên Stakeholder | Vai trò trong hệ thống |
-| :--- | :--- |
-| **Ban lãnh đạo / Ban giám đốc** | Đưa ra tầm nhìn, quyết định đầu tư và kỳ vọng hệ thống phục vụ được lượng lớn người dùng, có khả năng mở rộng dịch vụ tương lai. Cần xem các báo cáo về doanh thu, số lượng chuyến và hiệu quả hoạt động. |
-| **Khách hàng** | Người dùng cuối sử dụng ứng dụng để đăng ký, tìm tài xế, theo dõi chuyến đi, thanh toán và đánh giá tài xế. |
-| **Tài xế** | Người trực tiếp cung cấp dịch vụ vận chuyển. Sử dụng hệ thống để nhận/từ chối chuyến, cập nhật trạng thái di chuyển và vị trí. |
-| **Nhân viên vận hành** | Người dùng nội bộ có quyền quản trị để quản lý thông tin khách hàng, tài xế, hỗ trợ lỗi và tra cứu lịch sử giao dịch. |
-| **Nhà cung cấp thanh toán (Bên thứ 3)** | Đối tác tích hợp bên ngoài để xử lý các giao dịch thanh toán điện tử của khách hàng mà không lưu trực tiếp thông tin nhạy cảm vào hệ thống CAB. |
-| **Business Analyst (BA) / Nhóm phát triển** | Phân tích, làm rõ các quy tắc nghiệp vụ chưa chốt và xây dựng giải pháp kiến trúc linh hoạt theo yêu cầu của doanh nghiệp. |
+Sau khi phân tích quy trình hoạt động hiện tại của công ty ABC, các vấn đề chính được xác định:
+
+| Mã | Vấn đề nghiệp vụ | Diễn giải |
+|---|---|---|
+| BP01 | Điều phối tài xế thủ công | Việc tìm kiếm và phân công tài xế chủ yếu dựa vào nhân viên vận hành, gây mất thời gian và khó đảm bảo lựa chọn tối ưu. |
+| BP02 | Khó theo dõi trạng thái chuyến đi | Khách hàng không thể dễ dàng biết trạng thái xử lý yêu cầu, thông tin tài xế và tiến trình chuyến đi. |
+| BP03 | Quản lý thanh toán chưa tập trung | Thông tin về chi phí chuyến đi và kết quả thanh toán chưa được quản lý trên một hệ thống thống nhất. |
+| BP04 | Khó mở rộng khi số lượng người dùng tăng | Hệ thống hiện tại khó đáp ứng khi số lượng khách hàng, tài xế và chuyến xe tăng lên. |
+| BP05 | Khó kiểm soát hoạt động vận hành | Nhân viên vận hành gặp khó khăn trong việc theo dõi chuyến đi, trạng thái tài xế và xử lý sự cố. |
+
+---
+
+## 3. Tại sao cần xây dựng hệ thống mới? (Why Build New System)
+
+Công ty ABC cần xây dựng hệ thống CAB System mới nhằm giải quyết các vấn đề nghiệp vụ hiện tại:
+
+| Mã | Mục tiêu xây dựng hệ thống |
+|---|---|
+| WHY01 | Tự động hóa quá trình tìm kiếm và phân công tài xế thay vì xử lý thủ công. |
+| WHY02 | Cải thiện trải nghiệm khách hàng thông qua việc đặt xe trực tuyến và theo dõi trạng thái chuyến đi. |
+| WHY03 | Quản lý tập trung dữ liệu khách hàng, tài xế, phương tiện, chuyến đi và thanh toán. |
+| WHY04 | Hỗ trợ nhân viên vận hành quản lý và giám sát hoạt động hiệu quả hơn. |
+| WHY05 | Xây dựng nền tảng có khả năng mở rộng khi doanh nghiệp phát triển. |
+
+---
+
+## 4. Các tác nhân trong hệ thống
+
+Hệ thống CAB System có các nhóm người dùng chính:
+
+| Tác nhân | Vai trò |
+|---|---|
+| **Customer** | Sử dụng hệ thống để đăng ký tài khoản, đặt xe, theo dõi chuyến đi, thanh toán và đánh giá tài xế. |
+| **Driver** | Quản lý thông tin cá nhân, phương tiện, trạng thái hoạt động; nhận và thực hiện chuyến xe. |
+| **Operations Staff** | Quản lý khách hàng, tài xế, phương tiện, chuyến xe; theo dõi và hỗ trợ xử lý các trường hợp lỗi. |
+| **Payment Provider** | Cung cấp dịch vụ thanh toán điện tử bên ngoài và xử lý giao dịch thanh toán. |
+| **ABC Management** | Định hướng mục tiêu kinh doanh, theo dõi hiệu quả hoạt động của hệ thống. |
+
+---
+
+# Bước 2: Xác định Stakeholders
+
+## 2.1. Danh sách Stakeholders
+
+| Stakeholder | Vai trò |
+|---|---|
+| **Customer** | Đặt chuyến xe, theo dõi trạng thái chuyến đi, thanh toán và đánh giá dịch vụ. |
+| **Driver** | Nhận chuyến, cập nhật trạng thái thực hiện chuyến và cung cấp dịch vụ vận chuyển. |
+| **Operations Staff** | Quản lý khách hàng, tài xế, phương tiện, chuyến đi và hỗ trợ xử lý sự cố. |
+| **ABC Management** | Xác định mục tiêu kinh doanh, phê duyệt yêu cầu và theo dõi hiệu quả hệ thống. |
+| **Payment Provider** | Hỗ trợ xử lý các giao dịch thanh toán điện tử. |
+
+---
+
+## 2.2. Stakeholder Matrix
+
 ```mermaid
 quadrantChart
-    title Ma trận Stakeholders - CAB System
-    x-axis Mức độ quan tâm thấp --> Mức độ quan tâm cao
-    y-axis Tầm ảnh hưởng thấp --> Tầm ảnh hưởng cao
-    quadrant-1 Quản lý chặt chẽ
-    quadrant-2 Giữ hài lòng
-    quadrant-3 Theo dõi
-    quadrant-4 Giữ thông tin
-    
-    %% Tọa độ (x, y) tương ứng với (Mức độ quan tâm, Tầm ảnh hưởng)
-    "Ban lãnh đạo / Ban giám đốc": [0.9, 0.9]
-    "BA / Nhóm phát triển": [0.8, 0.7]
-    "Nhà cung cấp thanh toán": [0.3, 0.8]
-    "Khách hàng": [0.85, 0.25]
-    "Tài xế": [0.8, 0.3]
-    "Nhân viên vận hành": [0.75, 0.35]
+    title Stakeholder Matrix - CAB System
 
+    x-axis "Low Interest" --> "High Interest"
+    y-axis "Low Influence" --> "High Influence"
+
+    "ABC Management": [0.90,0.95]
+    "Operations Staff": [0.85,0.85]
+    "Customer": [0.80,0.70]
+    "Driver": [0.75,0.65]
+    "Payment Provider": [0.45,0.60]
 ```
-Bước 3: mục đích, mục tiêu nghiệp vụ. liệt kê business gone. viết tắt BG01. ví dụ BG01: Giảm thời gian tìm tài xế, có khả năng tự động tìm tài xế. BG02 hỗ trợ thanh toán cho phéo thanh toán tiền mặt trực tuyến
+
+### Phân loại Stakeholder
+
+| Nhóm | Stakeholder |
+|---|---|
+| Ảnh hưởng cao - Quan tâm cao | ABC Management, Operations Staff |
+| Ảnh hưởng trung bình/cao - Quan tâm cao | Customer, Driver |
+| Ảnh hưởng trung bình | Payment Provider |
+
+---
+
+# Bước 3: Xác định Business Goal (BG)
+
+Dựa trên vấn đề nghiệp vụ và mong muốn của khách hàng, hệ thống CAB System có các Business Goal:
+
+| Mã | Business Goal | Mục đích của hệ thống |
+|---|---|---|
+| **BG01** | Tự động hóa tìm và phân công tài xế | Hệ thống có khả năng tự động tìm tài xế phù hợp dựa trên trạng thái sẵn sàng và vị trí. |
+| **BG02** | Nâng cao khả năng theo dõi chuyến đi | Cho phép khách hàng theo dõi trạng thái chuyến xe, thông tin tài xế và thời gian dự kiến đến. |
+| **BG03** | Hỗ trợ tính cước và thanh toán | Cho phép hệ thống xác định số tiền cần thanh toán và hỗ trợ thanh toán tiền mặt hoặc trực tuyến. |
+| **BG04** | Cung cấp thông báo kịp thời | Gửi thông báo cho khách hàng và tài xế khi xảy ra các sự kiện quan trọng. |
+| **BG05** | Nâng cao hiệu quả quản lý vận hành | Hỗ trợ nhân viên vận hành quản lý khách hàng, tài xế, chuyến xe và xử lý sự cố. |
+| **BG06** | Đảm bảo khả năng mở rộng hệ thống | Cho phép hệ thống phát triển thêm chức năng trong tương lai. |
+
+---
+
+# Bước 4: Xác định phạm vi yêu cầu (Scope)
+
+## 4.1. Phạm vi hệ thống MVB/MVP
+
+Đối với phiên bản MVB/MVP, CAB System tập trung vào các nghiệp vụ cốt lõi:
+
+| STT | Scope | Yêu cầu cần thực hiện |
+|---|---|---|
+| 1 | Quản lý khách hàng | Đăng ký tài khoản, đăng nhập, cập nhật thông tin cá nhân. |
+| 2 | Quản lý tài xế | Quản lý hồ sơ tài xế, trạng thái hoạt động và thông tin phương tiện. |
+| 3 | Quản lý phương tiện | Lưu trữ thông tin phương tiện phục vụ chuyến xe. |
+| 4 | Đặt chuyến xe | Khách hàng nhập điểm đón, điểm đến, chọn loại xe và gửi yêu cầu. |
+| 5 | Tìm và phân công tài xế | Hệ thống tìm tài xế phù hợp và gửi yêu cầu nhận chuyến. |
+| 6 | Quản lý chuyến xe | Theo dõi và cập nhật trạng thái chuyến đi. |
+| 7 | Tính cước | Xác định số tiền khách hàng phải thanh toán. |
+| 8 | Thanh toán | Hỗ trợ thanh toán tiền mặt và thanh toán điện tử. |
+| 9 | Thông báo | Gửi thông báo về trạng thái chuyến xe và thanh toán. |
+| 10 | Lịch sử và đánh giá | Cho phép khách hàng xem lịch sử và đánh giá tài xế. |
+| 11 | Quản lý vận hành | Hỗ trợ nhân viên quản lý và giám sát hoạt động hệ thống. |
+
+---
+
+## 4.2. Ngoài phạm vi MVB/MVP
+
+Các chức năng sau chưa thực hiện trong phiên bản đầu:
+
+| Nội dung | Lý do |
+|---|---|
+| AI dự đoán nhu cầu đặt xe | Chưa cần thiết trong giai đoạn xây dựng hệ thống cơ bản. |
+| Thuật toán tối ưu điều phối phức tạp | MVB chỉ yêu cầu tìm tài xế phù hợp ở mức cơ bản. |
+| Chương trình khuyến mãi, tích điểm | Không thuộc quy trình đặt xe cốt lõi. |
+| Ví điện tử riêng | Chưa cần thiết vì đã hỗ trợ thanh toán qua bên ngoài. |
+| Mở rộng sang giao hàng hoặc dịch vụ khác | Không thuộc phạm vi CAB System hiện tại. |
+---
+# Bước 5: Xây dựng Business Requirement (BR)
+
+Sau khi phân tích yêu cầu ban đầu và xác nhận lại với khách hàng, các yêu cầu nghiệp vụ của hệ thống CAB System được xác định như sau:
+
+| BR | Tên BR | Diễn giải |
+|---|---|---|
+| **BR01** | **Quản lý tài khoản khách hàng** | Cho phép khách hàng đăng ký tài khoản, đăng nhập và cập nhật thông tin cá nhân để sử dụng dịch vụ đặt xe. |
+| **BR02** | **Quản lý tài xế và phương tiện** | Cho phép quản lý thông tin tài xế, thông tin phương tiện và trạng thái hoạt động của tài xế. |
+| **BR03** | **Đặt chuyến xe** | Cho phép khách hàng nhập điểm đón, điểm đến, lựa chọn loại xe và gửi yêu cầu đặt chuyến. |
+| **BR04** | **Tìm và phân công tài xế** | Cho phép hệ thống tìm kiếm tài xế phù hợp dựa trên trạng thái sẵn sàng, vị trí và tiêu chí vận hành. |
+| **BR05** | **Tiếp nhận và thực hiện chuyến xe** | Cho phép tài xế nhận hoặc từ chối chuyến, cập nhật trạng thái trong quá trình thực hiện chuyến đi. |
+| **BR06** | **Theo dõi chuyến xe** | Cho phép khách hàng theo dõi trạng thái chuyến xe, thông tin tài xế và thời gian dự kiến đến. |
+| **BR07** | **Tính cước chuyến xe** | Cho phép hệ thống xác định số tiền khách hàng phải trả dựa trên thông tin chuyến đi. |
+| **BR08** | **Thanh toán chuyến xe** | Cho phép khách hàng thanh toán bằng tiền mặt hoặc phương thức thanh toán điện tử thông qua nhà cung cấp bên ngoài. |
+| **BR09** | **Thông báo** | Cho phép hệ thống gửi thông báo đến khách hàng và tài xế khi có các sự kiện liên quan đến chuyến xe. |
+| **BR10** | **Lịch sử và đánh giá chuyến xe** | Cho phép khách hàng xem lịch sử chuyến đi và đánh giá tài xế sau khi chuyến xe hoàn thành. |
+| **BR11** | **Quản lý vận hành** | Cho phép nhân viên vận hành quản lý khách hàng, tài xế, phương tiện, chuyến xe và hỗ trợ xử lý sự cố. |
 
 
-### Bước 3: Mục đích, mục tiêu nghiệp vụ (Business Goals)
+---
 
-Dự án xây dựng nền tảng CAB System nhằm giải quyết các hạn chế của hệ thống cũ và định hướng phát triển lâu dài, với các mục tiêu nghiệp vụ (Business Goals - BG) cụ thể như sau:
+# Bước 6: Xây dựng Business Process
 
-* **BG01:** Tự động hóa quá trình điều phối và phân công tài xế dựa trên vị trí và trạng thái sẵn sàng, giúp giảm thời gian tìm tài xế và ưu tiên tài xế phù hợp ở gần khách hàng[cite: 1].
-* **BG02:** Quản lý thông tin thanh toán tập trung, hỗ trợ tính cước tự động và cho phép khách hàng thanh toán linh hoạt bằng tiền mặt hoặc phương thức thanh toán điện tử an toàn (không lưu dữ liệu nhạy cảm)[cite: 1].
-* **BG03:** Nâng cao trải nghiệm người dùng thông qua việc cho phép khách hàng theo dõi trạng thái chuyến đi, xem thời gian dự kiến tài xế đến và nhận các thông báo kịp thời về hành trình[cite: 1].
-* **BG04:** Xây dựng nền tảng quản trị tập trung, giúp nhân viên vận hành dễ dàng quản lý thông tin (khách hàng, tài xế, chuyến đi), xử lý lỗi và cung cấp các báo cáo hiệu quả hoạt động (doanh thu, tỷ lệ hủy chuyến)[cite: 1].
-* **BG05:** Đảm bảo hệ thống hoạt động ổn định, có khả năng chịu tải để phục vụ số lượng lớn người dùng cùng lúc, đặc biệt là vào các thời điểm nhu cầu đặt xe tăng cao[cite: 1].
-* **BG06:** Xây dựng kiến trúc hệ thống linh hoạt, cho phép các thành phần (như thanh toán, thông báo) mở rộng độc lập và dễ dàng tích hợp thêm các dịch vụ mới trong tương lai mà không phải xây dựng lại toàn bộ ứng dụng[cite: 1].
+## BP01. Quản lý tài khoản khách hàng
 
-Bước 4: xác định phạm vi yêu cầu, không làm lung tung quá tải.
-- Ví dụ: Quản lý khách hàng, quản lý tài xế 
-- Xác định có module cơ bản dưới góc độ là 1 hệ thống mvp
-- Xác định, liệt kê Ngoài phạm vi không nên làm
+Khách hàng → Đăng ký tài khoản → Nhập thông tin cá nhân → Hệ thống kiểm tra thông tin → Tạo tài khoản → Đăng nhập hệ thống → Cập nhật thông tin khi cần thiết.
 
-### Bước 4: Xác định phạm vi yêu cầu (Project Scope)
 
-Để đảm bảo dự án triển khai đúng tiến độ 7 tuần và tập trung vào các tính năng cốt lõi (MVP), phạm vi hệ thống CAB System được xác định như sau:
+---
 
-#### 4.1. Trong phạm vi (In-Scope - Các Module cơ bản của MVP)
-Hệ thống sẽ tập trung xây dựng các tính năng phục vụ luồng đặt xe và vận hành cơ bản nhất:
-*   **Module Khách hàng:** Đăng ký/đăng nhập, cập nhật thông tin cá nhân, đặt xe (nhập điểm đón/đến, chọn loại xe), theo dõi trạng thái chuyến đi, xem lịch sử chuyến, thanh toán và đánh giá tài xế[cite: 1].
-*   **Module Tài xế:** Quản lý hồ sơ và phương tiện, chuyển trạng thái sẵn sàng, nhận/từ chối chuyến xe, và cập nhật trạng thái theo thời gian thực (đã đến, đã đón, đang di chuyển, hoàn thành)[cite: 1].
-*   **Module Điều phối (Core):** Thuật toán tự động tìm kiếm, đề xuất và phân công tài xế phù hợp/gần nhất với khách hàng, có cơ chế chuyển tài xế khác nếu bị từ chối[cite: 1].
-*   **Module Thanh toán & Tính cước:** Tính số tiền cước dựa trên thông tin chuyến đi; hỗ trợ thanh toán tiền mặt và tích hợp với một nhà cung cấp thanh toán điện tử bên thứ ba[cite: 1].
-*   **Module Thông báo:** Gửi thông báo tự động cho khách hàng và tài xế về các sự kiện quan trọng (nhận chuyến, đến điểm đón, hoàn thành, thanh toán)[cite: 1].
-*   **Module Quản trị (Admin):** Phân quyền truy cập cơ bản; quản lý khách hàng, tài xế, phương tiện, chuyến đi; tra cứu lịch sử giao dịch và cung cấp báo cáo thống kê cơ bản (số chuyến, doanh thu, tỷ lệ hoàn thành/hủy)[cite: 1].
+## BP02. Quản lý tài xế và phương tiện
 
-#### 4.2. Ngoài phạm vi (Out-of-Scope - Không làm trong giai đoạn MVP)
-Để tránh quá tải và rủi ro, hệ thống sẽ KHÔNG bao gồm các chức năng sau trong giai đoạn này:
-*   **Lưu trữ dữ liệu nhạy cảm:** Không lưu trữ trực tiếp thông tin thẻ hoặc tài khoản thanh toán ngân hàng của khách hàng trên cơ sở dữ liệu của hệ thống CAB[cite: 1].
-*   **Tích hợp đa dịch vụ/Đa đối tác:** Chưa phát triển thêm các loại hình dịch vụ mới, hoặc tích hợp thêm nhiều phương thức thanh toán/nhà cung cấp thông báo khác nhau cùng lúc[cite: 1].
-*   **Các quy tắc nghiệp vụ phức tạp chưa thống nhất:** Tạm thời sử dụng các thuật toán và luồng xử lý cơ bản nhất đối với việc tính cước, chính sách hủy chuyến, tiêu chí ưu tiên tài xế và kịch bản mất kết nối mạng, cho đến khi có quyết định chính thức từ ban lãnh đạo[cite: 1].
+Tài xế/Nhân viên vận hành → Tạo tài khoản tài xế → Cập nhật hồ sơ tài xế → Cập nhật thông tin phương tiện → Cập nhật trạng thái hoạt động.
 
-Bước 5:
-- gặp khách hàng để xác nhận lại. rồi chuyển yêu cầu này thì Business Requirements ký hiệu là BR01, BR02,..Ví dụ BR01 đặt chuyến xe. Lập bảng mã bao gồm 3 cột stt, tên, diễn giải vd cho phép khách hàng đặt xe, cung cấp nơi đến
-### Bước 5: Chuyển đổi yêu cầu thành Business Requirements (BR)
+Tài xế có thể chuyển sang trạng thái sẵn sàng để nhận chuyến xe.
 
-Sau khi gặp khách hàng để xác nhận lại các luồng thông tin cơ bản, dưới đây là danh sách các yêu cầu nghiệp vụ (Business Requirements) cốt lõi của hệ thống CAB System được chuẩn hóa:
 
-| Mã BR | Tên Yêu cầu Nghiệp vụ | Diễn giải chi tiết |
-| :--- | :--- | :--- |
-| **BR01** | Quản lý tài khoản và hồ sơ | Khách hàng và tài xế có thể đăng ký tài khoản, đăng nhập và cập nhật thông tin cá nhân hoặc phương tiện; nhân viên vận hành cũng có thể tạo tài khoản cho tài xế. |
-| **BR02** | Đặt chuyến xe | Cho phép khách hàng nhập điểm đón, điểm đến, lựa chọn loại xe mong muốn và gửi yêu cầu đặt xe lên hệ thống. |
-| **BR03** | Điều phối và phân công tài xế | Hệ thống tự động xác định và ưu tiên tài xế phù hợp, gần khách hàng nhất; nếu tài xế từ chối hoặc không phản hồi, hệ thống tiếp tục tìm người khác mà không yêu cầu khách hàng đặt lại. |
-| **BR04** | Tiếp nhận và thực hiện chuyến | Cho phép tài xế chuyển trạng thái sẵn sàng, nhận thông báo chuyến, chấp nhận hoặc từ chối, và cập nhật trạng thái di chuyển (đã đến, đã đón, đang đi, hoàn thành). |
-| **BR05** | Theo dõi trạng thái chuyến đi | Hệ thống cho phép khách hàng theo dõi việc tìm tài xế, xem thông tin tài xế đã nhận, thời gian dự kiến đến và trạng thái chuyến đi theo thời gian thực. |
-| **BR06** | Tính cước và Thanh toán | Hệ thống tự động tính tiền dựa trên loại dịch vụ; hỗ trợ thanh toán tiền mặt hoặc điện tử qua đối tác thứ 3, và có cơ chế xử lý lại nếu giao dịch thanh toán điện tử thất bại. |
-| **BR07** | Hệ thống thông báo | Tự động gửi thông báo cho khách hàng và tài xế ở các cột mốc quan trọng (đã tiếp nhận yêu cầu, tài xế nhận chuyến, tài xế đến nơi, hoàn thành chuyến và kết quả thanh toán). |
-| **BR08** | Lịch sử và Đánh giá | Cho phép khách hàng xem lại lịch sử các chuyến đi đã thực hiện, chi tiết số tiền đã trả và thực hiện đánh giá tài xế sau khi chuyến đi kết thúc. |
-| **BR09** | Quản trị và Báo cáo vận hành | Cung cấp giao diện phân quyền cho nhân viên vận hành để quản lý hệ thống, xử lý chuyến lỗi, tra cứu giao dịch và xem báo cáo (doanh thu, tỷ lệ hủy, hiệu quả tài xế). |
+---
 
-Bước 6: Xây dựng business process. Ví dụ khách: đặt chuyến cần tạo chuyến đi, xác nhận điểm đón điểm đến, xác nhận, tìm tài xế, nếu tìm được, thì đợi tài xế chấp nhận,...
-### Bước 6: Xây dựng quy trình nghiệp vụ (Business Process)
+## BP03. Đặt chuyến xe và tìm tài xế
 
-Dưới đây là luồng quy trình nghiệp vụ cốt lõi nhất của hệ thống CAB System: **Quy trình Đặt xe và Thực hiện chuyến đi**.
+Khách hàng → Nhập điểm đón → Nhập điểm đến → Chọn loại xe → Gửi yêu cầu đặt xe → Hệ thống tiếp nhận yêu cầu → Tạo chuyến xe → Tìm tài xế phù hợp → Gửi yêu cầu nhận chuyến đến tài xế.
 
-**Luồng chính (Main Flow):**
-1. **Khách hàng** đăng nhập, nhập thông tin điểm đón, điểm đến, chọn loại xe và gửi yêu cầu đặt chuyến[cite: 1].
-2. **Hệ thống** tiếp nhận yêu cầu, hiển thị trạng thái đang tìm kiếm và tự động xác định các tài xế phù hợp ở gần vị trí khách hàng[cite: 1].
-3. **Hệ thống** gửi thông báo yêu cầu nhận chuyến đến ứng dụng của **Tài xế** phù hợp nhất[cite: 1].
-4. **Tài xế** nhận thông báo và bấm thao tác "Chấp nhận" chuyến đi[cite: 1].
-5. **Hệ thống** lập tức thông báo lại cho **Khách hàng** thông tin tài xế đã nhận chuyến và dự kiến thời gian tài xế đến[cite: 1].
-6. **Tài xế** di chuyển và cập nhật trạng thái "Đã đến điểm đón" trên ứng dụng[cite: 1].
-7. **Tài xế** gặp khách, cập nhật trạng thái "Đã đón khách" và hệ thống chuyển sang trạng thái "Đang di chuyển"[cite: 1].
-8. Khi đến điểm đến, **Tài xế** cập nhật trạng thái "Hoàn thành chuyến"[cite: 1].
-9. **Hệ thống** tự động tính toán tổng số tiền cước thực tế phải trả dựa trên thông tin chuyến đi[cite: 1].
-10. **Khách hàng** tiến hành thanh toán và **Hệ thống** gửi thông báo khi thanh toán có kết quả thành công[cite: 1].
-11. **Khách hàng** có thể xem lại số tiền đã trả và thực hiện đánh giá (rating) tài xế để kết thúc quy trình[cite: 1].
+Nếu tài xế chấp nhận:
 
-**Các luồng ngoại lệ (Alternate Flows / Exceptions):**
-* **Ngoại lệ ở bước 4 (Tài xế từ chối / Bỏ qua):** Nếu tài xế đầu tiên từ chối hoặc hết thời gian chờ phản hồi, hệ thống sẽ tự động chuyển yêu cầu sang cho tài xế phù hợp tiếp theo mà không bắt khách hàng phải tạo lại yêu cầu[cite: 1].
-* **Ngoại lệ ở bước 4 (Không tìm được tài xế):** Nếu hệ thống đã tìm kiếm diện rộng mà không có tài xế nào nhận chuyến, hệ thống phải gửi thông báo rõ ràng cho khách hàng để họ nắm thông tin[cite: 1].
-* **Ngoại lệ ở bước 10 (Lỗi thanh toán):** Nếu khách hàng chọn thanh toán điện tử nhưng giao dịch bị thất bại, hệ thống sẽ thông báo lỗi cho khách hàng và cho phép họ thao tác xử lý lại theo chính sách[cite: 1].
+Hệ thống xác nhận tài xế → Thông báo thông tin tài xế cho khách hàng.
 
-Bước 7: Thiết kế phân rả yêu cầu nghiệp vụ từ BR (mã viết tắt Funtional Requerement là FR). Ví dụ FR01: Tìm tài xế. FR02: Chọn những  tài xế online. FR03: chọn loại xe. FR04: Chọn tài xế có đánh giá cao. Lưu ý đọc vào yêu cầu có thì mới đưa vô các ví dụ chỉ là gợi ý chưa chắc có trong yêu cầu
-### Bước 7: Phân rã yêu cầu nghiệp vụ thành Yêu cầu chức năng (Functional Requirements - FR)
+Nếu tài xế từ chối hoặc không phản hồi:
 
-Dưới đây là danh sách phân rã chi tiết các chức năng hệ thống dựa trên yêu cầu từ các bên liên quan.
+Hệ thống tiếp tục tìm tài xế khác.
 
-| Mã FR | Thuộc mã BR | Tên Yêu cầu chức năng (FR) | Diễn giải chi tiết (Dựa trên tài liệu dự án) |
-| :--- | :--- | :--- | :--- |
-| **FR01** | BR01 | Đăng ký và đăng nhập tài khoản | Hệ thống cho phép khách hàng và tài xế tự đăng ký tài khoản, đăng nhập vào ứng dụng[cite: 1]. Nhân viên vận hành cũng có quyền tạo tài khoản cho tài xế[cite: 1]. |
-| **FR02** | BR01 | Cập nhật hồ sơ | Người dùng (khách hàng, tài xế) có thể cập nhật thông tin cá nhân; tài xế có thể cập nhật thêm thông tin phương tiện[cite: 1]. |
-| **FR03** | BR02 | Nhập thông tin hành trình | Khách hàng có thể nhập điểm đón và điểm đến trên hệ thống[cite: 1]. |
-| **FR04** | BR02 | Chọn loại xe và đặt chuyến | Khách hàng được lựa chọn loại xe mong muốn và nhấn gửi yêu cầu đặt xe[cite: 1]. |
-| **FR05** | BR03 | Tìm kiếm và lọc tài xế | Khi có yêu cầu, hệ thống tự động xác định các tài xế phù hợp dựa trên vị trí, trạng thái sẵn sàng và các tiêu chí vận hành khác[cite: 1]. |
-| **FR06** | BR03 | Ưu tiên tài xế | Hệ thống ưu tiên đề xuất chuyến đi cho những tài xế phù hợp và đang ở gần khách hàng nhất[cite: 1]. |
-| **FR07** | BR03 | Chuyển tiếp yêu cầu tự động | Nếu tài xế đầu tiên không phản hồi hoặc từ chối, hệ thống tự động tiếp tục tìm tài xế khác mà không bắt khách hàng tạo lại chuyến[cite: 1]. |
-| **FR08** | BR04 | Quản lý trạng thái hoạt động | Tài xế có thể bật/tắt (chuyển sang trạng thái sẵn sàng nhận chuyến) khi đang làm việc[cite: 1]. |
-| **FR09** | BR04 | Tiếp nhận chuyến xe | Tài xế có quyền thao tác chấp nhận hoặc từ chối khi nhận được thông báo yêu cầu chuyến mới phù hợp[cite: 1]. |
-| **FR10** | BR04 | Cập nhật hành trình | Trong quá trình chạy, tài xế cập nhật các mốc trạng thái: đã đến điểm đón, đã đón khách, đang di chuyển và hoàn thành chuyến[cite: 1]. |
-| **FR11** | BR04 | Theo dõi vị trí tài xế | Hệ thống liên tục lưu thông tin vị trí của tài xế để hỗ trợ tìm kiếm và tính toán thời gian đến[cite: 1]. |
-| **FR12** | BR05 | Hiển thị trạng thái chuyến | Khách hàng được xem tiến trình hệ thống tìm tài xế, biết tài xế nào đã nhận, thời gian dự kiến đến và trạng thái di chuyển hiện tại[cite: 1]. |
-| **FR13** | BR06 | Tính tiền cước | Sau khi chuyến kết thúc, hệ thống xác định số tiền khách phải trả dựa trên loại dịch vụ và thông tin chuyến[cite: 1]. |
-| **FR14** | BR06 | Thanh toán | Cho phép khách hàng chọn thanh toán bằng tiền mặt hoặc qua phương thức điện tử tích hợp với bên thứ 3 (không lưu thông tin nhạy cảm vào CAB)[cite: 1]. |
-| **FR15** | BR06 | Xử lý thanh toán lỗi | Cho phép khách hàng thực hiện xử lý thanh toán lại nếu giao dịch điện tử thất bại[cite: 1]. |
-| **FR16** | BR07 | Nhận thông báo (Khách hàng) | Hệ thống báo cho khách khi: tiếp nhận yêu cầu, có tài xế nhận, tài xế đến nơi, hoàn thành chuyến, kết quả thanh toán[cite: 1]. |
-| **FR17** | BR07 | Nhận thông báo (Tài xế) | Hệ thống báo cho tài xế khi: có chuyến mới, hoặc có thay đổi liên quan đến chuyến đang thực hiện[cite: 1]. |
-| **FR18** | BR08 | Xem lịch sử và Đánh giá | Khách hàng có thể xem lại lịch sử các chuyến, số tiền đã trả và thực hiện đánh giá tài xế[cite: 1]. |
-| **FR19** | BR09 | Quản lý thực thể hệ thống | Cung cấp giao diện cho nhân viên xem và quản lý danh sách khách hàng, tài xế, phương tiện và chuyến đi[cite: 1]. |
-| **FR20** | BR09 | Phân quyền và Giám sát | Phân quyền truy cập các chức năng quản trị nhạy cảm; lưu vết (log) các thao tác quan trọng để phục vụ kiểm tra sự cố[cite: 1]. |
-| **FR21** | BR09 | Báo cáo thống kê | Nhân viên vận hành xem được báo cáo số lượng chuyến, doanh thu, tỷ lệ hoàn thành/hủy chuyến, và hiệu quả của tài xế[cite: 1]. |
+Nếu không tìm được tài xế:
 
-Bước 8: Business rule và acception, xảy ra ngoại lệ thì sao, những tài xế nào trong trại thái sẵn sàng mới tạo chuyến, nếu đợi tài xế lâu quá, quá thời hạn tài xế không chấp nhận
-### Bước 8: Thiết kế Quy tắc nghiệp vụ (Business Rules) và Xử lý ngoại lệ (Exceptions)
+Hệ thống thông báo cho khách hàng.
 
-Trong quá trình vận hành, hệ thống CAB System phải tuân thủ các quy tắc nghiệp vụ cốt lõi và có cơ chế tự động xử lý khi luồng đi chệch khỏi quỹ đạo bình thường.
 
-#### 8.1. Các quy tắc nghiệp vụ (Business Rules - BRU)
+---
 
-| Mã BRU | Tên Quy tắc | Mô tả chi tiết |
-| :--- | :--- | :--- |
-| **BRU01** | Điều kiện nhận chuyến | Hệ thống chỉ đề xuất và phân công chuyến đi cho những tài xế đã chuyển sang trạng thái "sẵn sàng nhận chuyến"[cite: 1]. |
-| **BRU02** | Tiêu chí ưu tiên phân công | Thuật toán điều phối phải ưu tiên những tài xế phù hợp và có vị trí gần khách hàng nhất[cite: 1]. Các tiêu chí vận hành khác sẽ được bổ sung sau khi chốt với doanh nghiệp[cite: 1]. |
-| **BRU03** | Ràng buộc bảo mật thanh toán | Hệ thống tuyệt đối không được lưu trữ trực tiếp các thông tin nhạy cảm của thẻ hoặc tài khoản thanh toán của khách hàng trên cơ sở dữ liệu nội bộ[cite: 1]. |
-| **BRU04** | Ràng buộc xác thực & Phân quyền | Khách hàng và tài xế bắt buộc phải được xác thực trước khi sử dụng các tính năng của tài khoản[cite: 1]. Nhân viên vận hành không được thực hiện các thao tác nhạy cảm nếu không được phân quyền phù hợp[cite: 1]. |
-| **BRU05** | Lưu vết dữ liệu | Mọi thao tác quan trọng trên hệ thống (dữ liệu giao dịch, thay đổi trạng thái) phải được lưu vết để phục vụ kiểm tra khi có sự cố[cite: 1]. |
+## BP04. Thực hiện và theo dõi chuyến xe
 
-#### 8.2. Các trường hợp ngoại lệ (Exceptions - EXC)
+Tài xế nhận chuyến → Di chuyển đến điểm đón → Cập nhật "Đã đến điểm đón" → Đón khách → Cập nhật "Đã đón khách" → Di chuyển đến điểm đến → Cập nhật "Hoàn thành chuyến".
 
-| Mã EXC | Tình huống ngoại lệ | Luồng xử lý của hệ thống |
-| :--- | :--- | :--- |
-| **EXC01** | Tài xế từ chối hoặc hết hạn chờ (Timeout) | Nếu tài xế được đề xuất bấm từ chối hoặc không phản hồi trong thời gian quy định, hệ thống tự động tiếp tục tìm tài xế khác. **Tuyệt đối không** yêu cầu khách hàng tạo lại chuyến xe[cite: 1]. |
-| **EXC02** | Không tìm được tài xế | Sau khi hệ thống đã tìm kiếm mà không có tài xế nào nhận chuyến, hệ thống phải dừng tìm kiếm và gửi thông báo rõ ràng cho khách hàng[cite: 1]. |
-| **EXC03** | Giao dịch thanh toán thất bại | Nếu thanh toán điện tử bị lỗi, hệ thống phải thông báo ngay cho khách hàng và cung cấp tùy chọn cho phép xử lý thanh toán lại theo chính sách của doanh nghiệp[cite: 1]. |
-| **EXC04** | Sự cố mất kết nối mạng | *(Yêu cầu đang chờ làm rõ)* BA cần làm việc thêm với các bên liên quan để chốt chính sách xử lý khi khách hàng hoặc tài xế bị mất mạng giữa chuyến đi[cite: 1]. |
-| **EXC05** | Lỗi một phần hệ thống (Thanh toán/Thông báo) | Kiến trúc hệ thống phải đảm bảo các module độc lập. Nếu chức năng thanh toán hoặc thông báo bị lỗi cục bộ, toàn bộ ứng dụng đặt xe vẫn phải hoạt động được, không bị sập toàn hệ thống[cite: 1]. |
+Trong quá trình thực hiện:
 
-Bước 9: Data modeling, xây dựng các model. nhìn vô để xác định các thực thể và vẽ được sơ đồ erd
-### Bước 9: Mô hình hóa dữ liệu (Data Modeling - ERD)
+Khách hàng → Theo dõi trạng thái chuyến xe → Xem thông tin tài xế → Theo dõi thời gian dự kiến đến.
 
-Dựa trên các yêu cầu nghiệp vụ, hệ thống CAB System sẽ bao gồm các thực thể cốt lõi sau:
 
-#### 9.1. Xác định các Thực thể (Entities) và Thuộc tính (Attributes)
+---
 
-| Tên Thực thể | Diễn giải dựa trên yêu cầu | Thuộc tính cơ bản (Dự kiến) |
-| :--- | :--- | :--- |
-| **Khách hàng** | Người đăng ký tài khoản, cập nhật thông tin cá nhân và tạo yêu cầu chuyến đi[cite: 1]. | ID_KhachHang, HoTen, SoDienThoai, MatKhau |
-| **Tài xế** | Người đăng ký hồ sơ, quản lý trạng thái sẵn sàng và lưu vị trí hiện tại[cite: 1]. | ID_TaiXe, HoTen, SoDienThoai, TrangThai (Sẵn sàng/Đang bận), ViTriHienTai |
-| **Phương tiện** | Thông tin xe do tài xế hoặc nhân viên vận hành cập nhật, dùng để khớp với "loại xe" khách hàng chọn[cite: 1]. | ID_PhuongTien, ID_TaiXe, BienSo, LoaiXe |
-| **Chuyến đi** | Thực thể trung tâm lưu thông tin hành trình từ khi đặt đến khi hoàn thành[cite: 1]. | ID_ChuyenDi, ID_KhachHang, ID_TaiXe, DiemDon, DiemDen, TrangThai, TienCuoc |
-| **Thanh toán** | Lưu trữ thông tin giao dịch. Lưu ý: Chỉ lưu trạng thái và số tiền, không lưu thẻ tín dụng/nhạy cảm[cite: 1]. | ID_ThanhToan, ID_ChuyenDi, PhuongThuc (Tiền mặt/Điện tử), TrangThaiGiaoDich |
-| **Đánh giá** | Khách hàng thực hiện đánh giá tài xế sau khi chuyến đi hoàn thành[cite: 1]. | ID_DanhGia, ID_ChuyenDi, ID_KhachHang, ID_TaiXe, DiemSo, NhanXet |
-| **Nhân viên vận hành**| Người dùng có quyền quản trị để quản lý hệ thống và tra cứu lịch sử[cite: 1]. | ID_NhanVien, HoTen, PhanQuyen |
+## BP05. Tính cước và thanh toán
 
-#### 9.2. Sơ đồ Thực thể Liên kết (ERD)
+Chuyến xe hoàn thành → Hệ thống xác định số tiền phải trả → Khách hàng chọn phương thức thanh toán.
 
-Dưới đây là sơ đồ mô tả mối quan hệ giữa các thực thể trong hệ thống:
+Nếu thanh toán tiền mặt:
+
+Khách hàng thanh toán trực tiếp → Hệ thống ghi nhận kết quả.
+
+Nếu thanh toán điện tử:
+
+Hệ thống gửi yêu cầu thanh toán đến Payment Provider → Nhận kết quả giao dịch → Cập nhật trạng thái thanh toán.
+
+Nếu thanh toán thất bại:
+
+Hệ thống thông báo lỗi → Cho phép khách hàng xử lý lại.
+
+
+---
+
+## BP06. Thông báo
+
+Phát sinh sự kiện → Hệ thống xác định đối tượng nhận thông báo → Gửi thông báo.
+
+Các sự kiện gồm:
+
+- Yêu cầu đặt xe được tiếp nhận.
+- Có tài xế nhận chuyến.
+- Tài xế đến điểm đón.
+- Chuyến xe hoàn thành.
+- Thanh toán có kết quả.
+
+
+---
+
+## BP07. Lịch sử và đánh giá chuyến xe
+
+Chuyến xe hoàn thành → Lưu thông tin chuyến đi → Khách hàng xem lịch sử chuyến xe → Khách hàng đánh giá tài xế.
+
+
+---
+
+## BP08. Quản lý vận hành
+
+Nhân viên vận hành → Quản lý khách hàng → Quản lý tài xế → Quản lý phương tiện → Theo dõi chuyến xe → Kiểm tra trạng thái tài xế → Hỗ trợ xử lý lỗi → Tra cứu lịch sử giao dịch.
+
+
+---
+
+# Bước 7: Phân rã Business Requirement thành Functional Requirement (FR)
+
+| BR | Functional Requirement | Tên FR | Diễn giải |
+|---|---|---|---|
+| BR01 | FR01 | Đăng ký tài khoản khách hàng | Cho phép khách hàng tạo tài khoản mới để sử dụng dịch vụ. |
+| BR01 | FR02 | Đăng nhập khách hàng | Cho phép khách hàng đăng nhập vào hệ thống. |
+| BR01 | FR03 | Cập nhật thông tin cá nhân | Cho phép khách hàng thay đổi thông tin cá nhân. |
+| BR02 | FR04 | Quản lý hồ sơ tài xế | Cho phép cập nhật thông tin cá nhân của tài xế. |
+| BR02 | FR05 | Quản lý phương tiện | Cho phép quản lý thông tin phương tiện của tài xế. |
+| BR02 | FR06 | Cập nhật trạng thái tài xế | Cho phép tài xế cập nhật trạng thái sẵn sàng hoặc không sẵn sàng. |
+| BR03 | FR07 | Nhập thông tin chuyến xe | Cho phép khách hàng nhập điểm đón, điểm đến và loại xe. |
+| BR03 | FR08 | Tạo yêu cầu đặt xe | Cho phép khách hàng gửi yêu cầu đặt chuyến. |
+| BR04 | FR09 | Tìm tài xế phù hợp | Hệ thống tìm tài xế dựa trên vị trí và trạng thái hoạt động. |
+| BR04 | FR10 | Gửi yêu cầu nhận chuyến | Hệ thống gửi thông tin chuyến xe đến tài xế. |
+| BR04 | FR11 | Xử lý tài xế từ chối | Hệ thống tìm tài xế khác khi tài xế từ chối hoặc không phản hồi. |
+| BR04 | FR12 | Thông báo không tìm được tài xế | Thông báo cho khách hàng khi không có tài xế phù hợp. |
+| BR05 | FR13 | Nhận chuyến xe | Cho phép tài xế chấp nhận chuyến xe. |
+| BR05 | FR14 | Từ chối chuyến xe | Cho phép tài xế từ chối chuyến xe. |
+| BR05 | FR15 | Cập nhật trạng thái chuyến | Cho phép tài xế cập nhật trạng thái chuyến đi. |
+| BR06 | FR16 | Theo dõi chuyến xe | Cho phép khách hàng xem trạng thái chuyến xe. |
+| BR06 | FR17 | Xem thông tin tài xế | Hiển thị thông tin tài xế nhận chuyến. |
+| BR06 | FR18 | Xem thời gian dự kiến đến | Hiển thị thời gian dự kiến tài xế đến điểm đón. |
+| BR07 | FR19 | Tính cước chuyến xe | Xác định số tiền khách hàng cần thanh toán. |
+| BR08 | FR20 | Thanh toán tiền mặt | Ghi nhận thanh toán bằng tiền mặt. |
+| BR08 | FR21 | Thanh toán điện tử | Xử lý thanh toán thông qua Payment Provider. |
+| BR08 | FR22 | Xử lý thanh toán thất bại | Thông báo lỗi và hỗ trợ thanh toán lại. |
+| BR09 | FR23 | Gửi thông báo | Gửi thông báo đến khách hàng và tài xế. |
+| BR10 | FR24 | Xem lịch sử chuyến xe | Cho phép khách hàng xem các chuyến đã thực hiện. |
+| BR10 | FR25 | Đánh giá tài xế | Cho phép khách hàng đánh giá tài xế. |
+| BR11 | FR26 | Quản lý khách hàng | Cho phép nhân viên quản lý thông tin khách hàng. |
+| BR11 | FR27 | Quản lý tài xế | Cho phép nhân viên quản lý thông tin tài xế. |
+| BR11 | FR28 | Quản lý phương tiện | Cho phép nhân viên quản lý thông tin phương tiện. |
+| BR11 | FR29 | Quản lý chuyến xe | Cho phép nhân viên theo dõi và quản lý chuyến xe. |
+| BR11 | FR30 | Tra cứu lịch sử giao dịch | Cho phép nhân viên tra cứu giao dịch. |
+
+
+---
+
+# Bước 8: Business Rule và Acceptance Criteria
+
+## 8.1. Business Rule
+
+| Mã | Business Rule | Diễn giải |
+|---|---|---|
+| BRL01 | Chỉ tài xế sẵn sàng được nhận chuyến | Hệ thống chỉ tìm các tài xế có trạng thái sẵn sàng. |
+| BRL02 | Tài xế phải phù hợp với yêu cầu chuyến | Tài xế được lựa chọn dựa trên vị trí và trạng thái hoạt động. |
+| BRL03 | Tài xế từ chối phải tìm tài xế khác | Hệ thống tự động tiếp tục quá trình điều phối. |
+| BRL04 | Không tìm được tài xế phải thông báo | Khách hàng phải nhận được thông báo rõ ràng. |
+| BRL05 | Chỉ được thanh toán sau khi hoàn thành chuyến | Hệ thống chỉ xác định thanh toán sau khi chuyến xe hoàn thành. |
+| BRL06 | Không lưu dữ liệu thanh toán nhạy cảm | Thông tin thẻ hoặc tài khoản thanh toán không được lưu trực tiếp. |
+| BRL07 | Chức năng quản trị phải phân quyền | Nhân viên chỉ được thực hiện chức năng theo quyền được cấp. |
+| BRL08 | Lưu vết thao tác quan trọng | Các thao tác quan trọng phải được ghi nhận để kiểm tra. |
+## 8.2. Acceptance Criteria (AC)
+
+Acceptance Criteria là các điều kiện cụ thể để xác định một Business Requirement đã hoàn thành và có thể nghiệm thu.
+
+| AC | Business Requirement | Tiêu chí chấp nhận |
+|---|---|---|
+| **AC01** | **BR01 - Quản lý tài khoản khách hàng** | Khách hàng có thể đăng ký tài khoản thành công, đăng nhập hệ thống và cập nhật thông tin cá nhân. |
+| **AC02** | **BR02 - Quản lý tài xế và phương tiện** | Tài xế có thể cập nhật hồ sơ cá nhân, thông tin phương tiện và trạng thái hoạt động. |
+| **AC03** | **BR03 - Đặt chuyến xe** | Khi khách hàng nhập đầy đủ điểm đón, điểm đến, loại xe và gửi yêu cầu, hệ thống tạo yêu cầu đặt chuyến thành công. |
+| **AC04** | **BR04 - Tìm và phân công tài xế** | Hệ thống tìm được tài xế có trạng thái sẵn sàng. Nếu tài xế từ chối hoặc không phản hồi, hệ thống tiếp tục tìm tài xế khác. Nếu không tìm được tài xế, hệ thống thông báo cho khách hàng. |
+| **AC05** | **BR05 - Tiếp nhận và thực hiện chuyến xe** | Tài xế có thể nhận hoặc từ chối chuyến xe và cập nhật được các trạng thái trong quá trình thực hiện chuyến đi. |
+| **AC06** | **BR06 - Theo dõi chuyến xe** | Khách hàng có thể xem trạng thái chuyến xe, thông tin tài xế và thời gian dự kiến tài xế đến. |
+| **AC07** | **BR07 - Tính cước chuyến xe** | Khi chuyến xe hoàn thành, hệ thống xác định được số tiền khách hàng cần thanh toán. |
+| **AC08** | **BR08 - Thanh toán chuyến xe** | Khách hàng có thể thanh toán bằng tiền mặt hoặc phương thức điện tử. Nếu thanh toán điện tử thất bại, hệ thống thông báo lỗi và cho phép xử lý lại. |
+| **AC09** | **BR09 - Thông báo** | Hệ thống gửi thông báo khi yêu cầu đặt xe được tạo, tài xế nhận chuyến, chuyến hoàn thành hoặc thanh toán có kết quả. |
+| **AC10** | **BR10 - Lịch sử và đánh giá chuyến xe** | Khách hàng xem được lịch sử chuyến đi và có thể đánh giá tài xế sau khi chuyến xe hoàn thành. |
+| **AC11** | **BR11 - Quản lý vận hành** | Nhân viên vận hành có thể quản lý khách hàng, tài xế, phương tiện, chuyến xe và tra cứu thông tin vận hành. |
+
+
+---
+
+# Bước 9: Data Modeling
+
+Dựa trên các yêu cầu nghiệp vụ và yêu cầu chức năng, hệ thống CAB System xác định các thực thể chính phục vụ việc xây dựng mô hình dữ liệu.
+
+## 9.1. Xác định các thực thể
+
+| STT | Thực thể | Ý nghĩa trong nghiệp vụ |
+|---|---|---|
+| **E01** | **Customer** | Lưu thông tin khách hàng sử dụng dịch vụ đặt xe. |
+| **E02** | **Driver** | Lưu thông tin tài xế tham gia thực hiện chuyến xe. |
+| **E03** | **Vehicle** | Lưu thông tin phương tiện của tài xế. |
+| **E04** | **Trip** | Lưu thông tin chuyến xe được tạo bởi khách hàng. |
+| **E05** | **Trip Status** | Lưu trạng thái của chuyến xe trong quá trình thực hiện. |
+| **E06** | **Payment** | Lưu thông tin thanh toán của chuyến xe. |
+| **E07** | **Transaction** | Lưu thông tin giao dịch thanh toán. |
+| **E08** | **Driver Location** | Lưu vị trí hiện tại của tài xế phục vụ việc tìm kiếm tài xế. |
+| **E09** | **Rating** | Lưu đánh giá của khách hàng dành cho tài xế. |
+| **E10** | **Operations Staff** | Lưu thông tin nhân viên vận hành hệ thống. |
+
+
+---
+
+## 9.2. Các thuộc tính chính của thực thể
+
+| Thực thể | Thuộc tính chính |
+|---|---|
+| **Customer** | CustomerID, FullName, Phone, Email, Password |
+| **Driver** | DriverID, FullName, Phone, Email, Password, Status |
+| **Vehicle** | VehicleID, DriverID, VehicleType, LicensePlate |
+| **Trip** | TripID, CustomerID, DriverID, StatusID, PickupLocation, Destination, Fare, CreatedAt |
+| **Trip Status** | StatusID, StatusName |
+| **Payment** | PaymentID, TripID, PaymentMethod, Amount, PaymentStatus |
+| **Transaction** | TransactionID, PaymentID, TransactionStatus, TransactionTime |
+| **Driver Location** | LocationID, DriverID, Latitude, Longitude, UpdatedAt |
+| **Rating** | RatingID, TripID, CustomerID, DriverID, RatingValue, Comment |
+| **Operations Staff** | StaffID, FullName, Email, Password, Role |
+
+
+---
+
+## 9.3. Sơ đồ ERD
 
 ```mermaid
 erDiagram
-    KHACH_HANG ||--o{ CHUYEN_DI : "tạo"
-    KHACH_HANG ||--o{ DANH_GIA : "thực hiện"
-    
-    TAI_XE ||--|| PHUONG_TIEN : "sử dụng"
-    TAI_XE ||--o{ CHUYEN_DI : "nhận"
-    TAI_XE ||--o{ DANH_GIA : "nhận"
-    
-    CHUYEN_DI ||--|| THANH_TOAN : "có"
-    CHUYEN_DI ||--|| DANH_GIA : "có"
-    
-    KHACH_HANG {
-        string ID_KhachHang PK
-        string HoTen
-    }
-    TAI_XE {
-        string ID_TaiXe PK
-        string HoTen
-        string TrangThai
-    }
-    PHUONG_TIEN {
-        string ID_PhuongTien PK
-        string LoaiXe
-    }
-    CHUYEN_DI {
-        string ID_ChuyenDi PK
-        string TrangThai
-        float TienCuoc
-    }
-    THANH_TOAN {
-        string ID_ThanhToan PK
-        string PhuongThuc
-    }
-    DANH_GIA {
-        string ID_DanhGia PK
-        int DiemSo
-    }
+
+CUSTOMER ||--o{ TRIP : creates
+
+DRIVER ||--o{ TRIP : performs
+
+DRIVER ||--o{ VEHICLE : owns
+
+DRIVER ||--o{ DRIVER_LOCATION : updates
+
+TRIP_STATUS ||--o{ TRIP : defines
+
+TRIP ||--o| PAYMENT : has
+
+PAYMENT ||--o{ TRANSACTION : creates
+
+TRIP ||--o| RATING : receives
+
+CUSTOMER ||--o{ RATING : gives
+
+DRIVER ||--o{ RATING : receives
+
+
+CUSTOMER {
+    int CustomerID PK
+    string FullName
+    string Phone
+    string Email
+    string Password
+}
+
+DRIVER {
+    int DriverID PK
+    string FullName
+    string Phone
+    string Email
+    string Status
+}
+
+VEHICLE {
+    int VehicleID PK
+    int DriverID FK
+    string VehicleType
+    string LicensePlate
+}
+
+TRIP {
+    int TripID PK
+    int CustomerID FK
+    int DriverID FK
+    int StatusID FK
+    string PickupLocation
+    string Destination
+    decimal Fare
+}
+
+TRIP_STATUS {
+    int StatusID PK
+    string StatusName
+}
+
+PAYMENT {
+    int PaymentID PK
+    int TripID FK
+    decimal Amount
+    string PaymentStatus
+}
+
+TRANSACTION {
+    int TransactionID PK
+    int PaymentID FK
+    string TransactionStatus
+}
+
+DRIVER_LOCATION {
+    int LocationID PK
+    int DriverID FK
+    decimal Latitude
+    decimal Longitude
+}
+
+RATING {
+    int RatingID PK
+    int TripID FK
+    int CustomerID FK
+    int DriverID FK
+    int RatingValue
+}
+
+OPERATIONS_STAFF {
+    int StaffID PK
+    string FullName
+    string Role
+}
 ```
-Bước 10: Tự thiết kế, Xác định các non-functional requirement - chức năng không phải yêu cầu
-### Bước 10: Yêu cầu phi chức năng (Non-Functional Requirements - NFR)
 
-Bên cạnh các tính năng sử dụng trực tiếp, hệ thống CAB System phải đáp ứng các tiêu chuẩn nghiêm ngặt về chất lượng phần mềm, kiến trúc và bảo mật như sau:
+---
 
-| Mã NFR | Phân loại | Tên Yêu cầu | Mô tả chi tiết |
-| :--- | :--- | :--- | :--- |
-| **NFR01** | Hiệu năng (Performance) | Khả năng chịu tải cao | Hệ thống phải hoạt động ổn định vào các thời điểm nhu cầu tăng cao, đảm bảo phục vụ được số lượng lớn khách hàng và tài xế cùng lúc mà không bị gián đoạn[cite: 1]. |
-| **NFR02** | Khả năng mở rộng (Scalability) | Mở rộng độc lập | Các thành phần của hệ thống cần có khả năng mở rộng độc lập khi tải tăng; kiến trúc phải đủ linh hoạt để bổ sung dịch vụ hoặc đối tác mới trong tương lai mà không phải xây dựng lại toàn bộ[cite: 1]. |
-| **NFR03** | Tính khả dụng (Availability) | Tránh rủi ro sập toàn hệ thống | Một lỗi cục bộ xảy ra ở chức năng thanh toán hoặc thông báo tuyệt đối không được làm cho toàn bộ hệ thống đặt xe ngừng hoạt động[cite: 1]. Các module phải được cách ly lỗi tốt. |
-| **NFR04** | Tính bảo trì (Maintainability) | Triển khai không gián đoạn | Các chức năng mới hoặc các bản cập nhật phải có thể được triển khai từng phần, hạn chế tối đa việc ảnh hưởng đến các chức năng đang hoạt động của người dùng[cite: 1]. |
-| **NFR05** | Bảo mật (Security) | Xác thực và Phân quyền | Khách hàng và tài xế bắt buộc phải được xác thực (Authentication) trước khi sử dụng. Các thao tác quản trị của nhân viên phải được kiểm soát quyền truy cập chặt chẽ (Authorization)[cite: 1]. |
-| **NFR06** | An toàn dữ liệu (Data Privacy) | Bảo vệ dữ liệu nhạy cảm | Thông tin cá nhân, phương tiện, vị trí và giao dịch phải được bảo vệ. Đặc biệt, hệ thống CAB không được lưu trữ trực tiếp thông tin nhạy cảm của thẻ hoặc tài khoản thanh toán[cite: 1]. |
-| **NFR07** | Khả năng truy vết (Auditability) | Lưu vết hệ thống (Logging) | Doanh nghiệp yêu cầu hệ thống phải lưu vết (log) toàn bộ các thao tác quan trọng để phục vụ quá trình kiểm tra, đối soát khi có sự cố xảy ra[cite: 1]. |
+# Bước 10: Non-Functional Requirement (NFR)
 
-```
-### Bước 11: Xác định Use Case và Sơ đồ Use Case Diagram
+Các yêu cầu phi chức năng của CAB System được xác định dựa trên mục tiêu xây dựng hệ thống MVB/MVP.
 
-#### 11.1. Danh sách Use Case
-
-| Mã UC | Tên Use Case | Actor chính |
+| Mã | Non-functional Requirement | Yêu cầu |
 |---|---|---|
-| **UC01** | Đăng ký/Quản lý tài khoản khách hàng | Customer[cite: 1] |
-| **UC02** | Đặt chuyến xe | Customer[cite: 1] |
-| **UC03** | Theo dõi chuyến xe | Customer[cite: 1] |
-| **UC04** | Xem lịch sử chuyến xe | Customer[cite: 1] |
-| **UC05** | Đánh giá tài xế | Customer[cite: 1] |
-| **UC06** | Quản lý tài khoản và phương tiện tài xế | Driver[cite: 1] |
-| **UC07** | Nhận/Từ chối chuyến xe | Driver[cite: 1] |
-| **UC08** | Cập nhật trạng thái chuyến xe | Driver[cite: 1] |
-| **UC09** | Cập nhật vị trí tài xế | Driver[cite: 1] |
-| **UC10** | Quản lý khách hàng | Operations Staff[cite: 1] |
-| **UC11** | Quản lý tài xế và phương tiện | Operations Staff[cite: 1] |
-| **UC12** | Quản lý và giám sát chuyến xe | Operations Staff[cite: 1] |
-| **UC13** | Tra cứu lịch sử giao dịch | Operations Staff[cite: 1] |
-| **UC14** | Thanh toán chuyến xe | Customer[cite: 1] |
+| **NFR01** | Khả năng mở rộng | Hệ thống có khả năng mở rộng khi số lượng khách hàng, tài xế và chuyến xe tăng lên. |
+| **NFR02** | Tính ổn định | Hệ thống hoạt động ổn định trong quá trình đặt xe, thực hiện chuyến và thanh toán. |
+| **NFR03** | Khả năng chịu lỗi | Lỗi tại chức năng thanh toán hoặc thông báo không làm toàn bộ hệ thống đặt xe ngừng hoạt động. |
+| **NFR04** | Bảo mật dữ liệu | Bảo vệ thông tin cá nhân khách hàng, tài xế, phương tiện và giao dịch. |
+| **NFR05** | Xác thực người dùng | Người dùng phải được xác thực trước khi sử dụng chức năng yêu cầu tài khoản. |
+| **NFR06** | Phân quyền | Người dùng chỉ được truy cập các chức năng phù hợp với vai trò. |
+| **NFR07** | Lưu vết hoạt động | Các thao tác quan trọng như cập nhật trạng thái chuyến, thanh toán phải được ghi nhận. |
+| **NFR08** | Khả năng tích hợp | Hệ thống có khả năng tích hợp với nhà cung cấp thanh toán và dịch vụ thông báo bên ngoài. |
+| **NFR09** | Khả năng bảo trì | Hệ thống dễ dàng nâng cấp, sửa lỗi và bổ sung chức năng mới. |
+| **NFR10** | Triển khai từng phần | Các chức năng mới có thể triển khai độc lập, hạn chế ảnh hưởng đến hệ thống đang hoạt động. |
+---
 
-#### 11.2. Sơ đồ Use Case Diagram
+# Bước 11: Xác định Use Case và Use Case Diagram
+
+## 11.1. Danh sách Use Case
+
+Dựa trên các Functional Requirement (FR), hệ thống CAB System xác định các Use Case chính:
+
+| Mã UC | Tên Use Case | Actor chính | Mô tả |
+|---|---|---|---|
+| UC01 | Đăng ký tài khoản | Customer, Driver | Cho phép người dùng tạo tài khoản để sử dụng hệ thống. |
+| UC02 | Đăng nhập hệ thống | Customer, Driver, Operations Staff | Cho phép người dùng truy cập hệ thống theo quyền hạn. |
+| UC03 | Quản lý thông tin cá nhân | Customer, Driver | Cho phép người dùng cập nhật thông tin cá nhân. |
+| UC04 | Quản lý phương tiện | Driver, Operations Staff | Quản lý thông tin phương tiện phục vụ chuyến xe. |
+| UC05 | Đặt chuyến xe | Customer | Cho phép khách hàng tạo yêu cầu đặt xe. |
+| UC06 | Tìm và phân công tài xế | System, Operations Staff | Tìm tài xế phù hợp và gửi yêu cầu nhận chuyến. |
+| UC07 | Nhận hoặc từ chối chuyến xe | Driver | Cho phép tài xế quyết định nhận hoặc từ chối chuyến. |
+| UC08 | Cập nhật trạng thái chuyến xe | Driver | Cho phép tài xế cập nhật tiến trình chuyến đi. |
+| UC09 | Theo dõi chuyến xe | Customer | Cho phép khách hàng xem trạng thái chuyến xe. |
+| UC10 | Tính cước chuyến xe | System | Tính số tiền khách hàng cần thanh toán. |
+| UC11 | Thanh toán chuyến xe | Customer, Payment Provider | Xử lý thanh toán cho chuyến xe. |
+| UC12 | Gửi thông báo | System | Gửi thông báo đến khách hàng và tài xế. |
+| UC13 | Xem lịch sử chuyến đi | Customer | Cho phép khách hàng xem các chuyến đã thực hiện. |
+| UC14 | Đánh giá tài xế | Customer | Cho phép khách hàng đánh giá sau chuyến đi. |
+| UC15 | Quản lý vận hành | Operations Staff | Quản lý dữ liệu và giám sát hoạt động hệ thống. |
+
+
+---
+
+# 11.2. Use Case Diagram
 
 ```mermaid
 flowchart LR
-    Customer["👤 Customer"]
-    Driver["👤 Driver"]
-    Staff["👤 Operations Staff"]
-    PaymentProvider["🏢 Payment Provider"]
 
-    subgraph CAB["CAB SYSTEM"]
-        direction TB
-        UC01("UC01: Đăng ký / Quản lý TK khách hàng")
-        UC02("UC02: Đặt chuyến xe")
-        UC03("UC03: Theo dõi chuyến xe")
-        UC04("UC04: Xem lịch sử chuyến xe")
-        UC05("UC05: Đánh giá tài xế")
-        
-        UC06("UC06: Quản lý TK và xe tài xế")
-        UC07("UC07: Nhận / Từ chối chuyến xe")
-        UC08("UC08: Cập nhật trạng thái chuyến")
-        UC09("UC09: Cập nhật vị trí tài xế")
-        
-        UC10("UC10: Quản lý khách hàng")
-        UC11("UC11: Quản lý tài xế và xe")
-        UC12("UC12: Quản lý & giám sát chuyến")
-        UC13("UC13: Tra cứu lịch sử giao dịch")
-        
-        UC14("UC14: Thanh toán chuyến xe")
-    end
+Customer((Customer))
+Driver((Driver))
+Staff((Operations Staff))
+Payment((Payment Provider))
 
-    Customer --- UC01
-    Customer --- UC02
-    Customer --- UC03
-    Customer --- UC04
-    Customer --- UC05
-    Customer --- UC14
+subgraph CAB_System
 
-    Driver --- UC06
-    Driver --- UC07
-    Driver --- UC08
-    Driver --- UC09
+UC01[Đăng ký tài khoản]
+UC02[Đăng nhập hệ thống]
+UC03[Quản lý thông tin cá nhân]
+UC04[Quản lý phương tiện]
+UC05[Đặt chuyến xe]
+UC06[Tìm và phân công tài xế]
+UC07[Nhận hoặc từ chối chuyến]
+UC08[Cập nhật trạng thái chuyến]
+UC09[Theo dõi chuyến xe]
+UC10[Tính cước chuyến xe]
+UC11[Thanh toán chuyến xe]
+UC12[Gửi thông báo]
+UC13[Xem lịch sử chuyến đi]
+UC14[Đánh giá tài xế]
+UC15[Quản lý vận hành]
 
-    Staff --- UC10
-    Staff --- UC11
-    Staff --- UC12
-    Staff --- UC13
+end
 
-    PaymentProvider --- UC14
+Customer --> UC01
+Customer --> UC02
+Customer --> UC03
+Customer --> UC05
+Customer --> UC09
+Customer --> UC11
+Customer --> UC13
+Customer --> UC14
+
+Driver --> UC01
+Driver --> UC02
+Driver --> UC03
+Driver --> UC04
+Driver --> UC07
+Driver --> UC08
+
+Staff --> UC04
+Staff --> UC06
+Staff --> UC15
+
+Payment --> UC11
+
+UC05 --> UC06
+UC06 --> UC12
+UC07 --> UC12
+UC08 --> UC12
+UC11 --> UC10
 ```
 
-### Bước 12: Đặc tả Use Case
+---
 
-**Đặc tả UC02 – Đặt chuyến xe**
+# UC08: Cập nhật trạng thái chuyến xe
+
+## Thông tin Use Case
 
 | Thành phần | Nội dung |
 |---|---|
-| **Mã UC** | UC02 |
-| **Tên** | Đặt chuyến xe |
-| **Actor** | Customer |
-| **Mục tiêu** | Cho phép khách hàng tạo yêu cầu đặt xe[cite: 1]. |
-| **Tiền điều kiện** | Customer đã đăng nhập vào hệ thống[cite: 1]. |
-| **Luồng chính** | 1. Khách hàng nhập điểm đón[cite: 1].<br>2. Khách hàng nhập điểm đến[cite: 1].<br>3. Khách hàng chọn loại xe[cite: 1].<br>4. Khách hàng gửi yêu cầu đặt xe[cite: 1].<br>5. Hệ thống tiếp nhận yêu cầu[cite: 1].<br>6. Hệ thống thông báo trạng thái đang tìm tài xế[cite: 1].<br>7. Hệ thống bắt đầu tìm tài xế phù hợp[cite: 1]. |
-| **Ngoại lệ** | Không tìm được tài xế phù hợp → hệ thống thông báo rõ ràng cho khách hàng[cite: 1]. |
-| **Kết quả** | Yêu cầu đặt xe được tạo và chuyển sang quá trình tìm tài xế[cite: 1]. |
+| Mã Use Case | UC08 |
+| Tên Use Case | Cập nhật trạng thái chuyến xe |
+| Actor chính | Driver |
+| Mục tiêu | Cho phép tài xế cập nhật tiến trình thực hiện chuyến xe. |
+| Tiền điều kiện | Tài xế đã nhận chuyến xe thành công. |
+| Hậu điều kiện | Trạng thái chuyến xe được cập nhật trên hệ thống. |
 
-### Bước 13: Tiêu chí chấp nhận (Acceptance Criteria - AC)
 
-| Mã AC | Liên kết BR | Tiêu chí chấp nhận (Hệ thống được nghiệm thu khi...) |
+## Basic Flow
+
+| Driver | System |
+|---|---|
+| 1. Tài xế truy cập thông tin chuyến xe. | |
+| 2. Cập nhật trạng thái chuyến xe. | |
+| | 3. Kiểm tra trạng thái hợp lệ. |
+| | 4. Lưu trạng thái mới của chuyến xe. |
+| | 5. Gửi thông báo cho khách hàng. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Trạng thái không hợp lệ | Hệ thống thông báo lỗi và yêu cầu tài xế cập nhật lại. |
+| Không thể lưu dữ liệu | Hệ thống thông báo lỗi và thực hiện lại thao tác lưu. |
+
+
+---
+
+# UC09: Theo dõi chuyến xe
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC09 |
+| Tên Use Case | Theo dõi chuyến xe |
+| Actor chính | Customer |
+| Mục tiêu | Cho phép khách hàng theo dõi trạng thái chuyến xe. |
+| Tiền điều kiện | Khách hàng đã đăng nhập và có chuyến xe đang hoạt động. |
+| Hậu điều kiện | Khách hàng xem được thông tin chuyến xe hiện tại. |
+
+
+## Basic Flow
+
+| Customer | System |
+|---|---|
+| 1. Chọn chức năng theo dõi chuyến xe. | |
+| | 2. Kiểm tra chuyến xe của khách hàng. |
+| | 3. Hiển thị trạng thái chuyến xe. |
+| | 4. Hiển thị thông tin tài xế. |
+| | 5. Hiển thị thời gian dự kiến đến. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Không có chuyến xe đang hoạt động | Hệ thống thông báo khách hàng chưa có chuyến xe. |
+| Không lấy được dữ liệu vị trí | Hệ thống hiển thị trạng thái gần nhất. |
+
+
+---
+
+# UC10: Tính cước chuyến xe
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC10 |
+| Tên Use Case | Tính cước chuyến xe |
+| Actor chính | System |
+| Mục tiêu | Xác định số tiền khách hàng cần thanh toán sau chuyến đi. |
+| Tiền điều kiện | Chuyến xe đã hoàn thành. |
+| Hậu điều kiện | Chi phí chuyến xe được tạo thành công. |
+
+
+## Basic Flow
+
+| System |
+|---|
+| 1. Nhận thông tin chuyến xe đã hoàn thành. |
+| 2. Kiểm tra dữ liệu chuyến đi. |
+| 3. Tính toán chi phí chuyến xe. |
+| 4. Lưu thông tin cước phí. |
+| 5. Chuyển thông tin sang chức năng thanh toán. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Thiếu thông tin chuyến xe | Hệ thống thông báo không thể tính cước. |
+| Lỗi tính toán | Hệ thống ghi nhận lỗi và yêu cầu xử lý lại. |
+
+
+---
+
+# UC11: Thanh toán chuyến xe
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC11 |
+| Tên Use Case | Thanh toán chuyến xe |
+| Actor chính | Customer |
+| Actor phụ | Payment Provider |
+| Mục tiêu | Cho phép khách hàng thanh toán chi phí chuyến xe. |
+| Tiền điều kiện | Chuyến xe đã hoàn thành và có thông tin cước phí. |
+| Hậu điều kiện | Trạng thái thanh toán được cập nhật. |
+
+
+## Basic Flow
+
+| Customer | System |
+|---|---|
+| 1. Chọn phương thức thanh toán. | |
+| 2. Xác nhận thanh toán. | |
+| | 3. Gửi yêu cầu thanh toán. |
+| | 4. Nhận kết quả giao dịch. |
+| | 5. Cập nhật trạng thái thanh toán. |
+| | 6. Gửi thông báo kết quả. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Thanh toán thất bại | Hệ thống thông báo lỗi và cho phép thanh toán lại. |
+| Payment Provider không phản hồi | Hệ thống ghi nhận trạng thái chờ xử lý. |
+
+
+---
+
+# UC12: Gửi thông báo
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC12 |
+| Tên Use Case | Gửi thông báo |
+| Actor chính | System |
+| Mục tiêu | Gửi thông tin đến khách hàng và tài xế khi có sự kiện xảy ra. |
+| Tiền điều kiện | Có sự kiện cần gửi thông báo. |
+| Hậu điều kiện | Thông báo được gửi đến người nhận. |
+
+
+## Basic Flow
+
+| System |
+|---|
+| 1. Nhận sự kiện từ hệ thống. |
+| 2. Xác định đối tượng nhận thông báo. |
+| 3. Tạo nội dung thông báo. |
+| 4. Gửi thông báo. |
+| 5. Lưu trạng thái gửi thông báo. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Gửi thông báo thất bại | Hệ thống lưu trạng thái lỗi và thực hiện gửi lại. |
+
+
+---
+
+# UC13: Xem lịch sử chuyến đi
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC13 |
+| Tên Use Case | Xem lịch sử chuyến đi |
+| Actor chính | Customer |
+| Mục tiêu | Cho phép khách hàng xem các chuyến xe đã thực hiện. |
+| Tiền điều kiện | Khách hàng đã đăng nhập. |
+| Hậu điều kiện | Danh sách lịch sử chuyến xe được hiển thị. |
+
+
+## Basic Flow
+
+| Customer | System |
+|---|---|
+| 1. Chọn chức năng lịch sử chuyến đi. | |
+| | 2. Tìm kiếm dữ liệu chuyến xe. |
+| | 3. Hiển thị danh sách chuyến xe. |
+| | 4. Hiển thị chi tiết chuyến xe khi khách hàng chọn. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Không có lịch sử chuyến đi | Hệ thống thông báo chưa có dữ liệu. |
+
+
+---
+
+# UC14: Đánh giá tài xế
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC14 |
+| Tên Use Case | Đánh giá tài xế |
+| Actor chính | Customer |
+| Mục tiêu | Cho phép khách hàng đánh giá chất lượng dịch vụ. |
+| Tiền điều kiện | Chuyến xe đã hoàn thành. |
+| Hậu điều kiện | Đánh giá được lưu vào hệ thống. |
+
+
+## Basic Flow
+
+| Customer | System |
+|---|---|
+| 1. Chọn chuyến xe cần đánh giá. | |
+| 2. Nhập điểm đánh giá và nhận xét. | |
+| | 3. Kiểm tra dữ liệu đánh giá. |
+| | 4. Lưu đánh giá. |
+| | 5. Thông báo đánh giá thành công. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Nội dung đánh giá không hợp lệ | Hệ thống yêu cầu nhập lại. |
+
+
+---
+
+# UC15: Quản lý vận hành
+
+## Thông tin Use Case
+
+| Thành phần | Nội dung |
+|---|---|
+| Mã Use Case | UC15 |
+| Tên Use Case | Quản lý vận hành |
+| Actor chính | Operations Staff |
+| Mục tiêu | Hỗ trợ nhân viên vận hành quản lý và giám sát hệ thống. |
+| Tiền điều kiện | Nhân viên đã đăng nhập và có quyền quản trị. |
+| Hậu điều kiện | Dữ liệu quản lý được cập nhật thành công. |
+
+
+## Basic Flow
+
+| Operations Staff | System |
+|---|---|
+| 1. Chọn chức năng quản lý. | |
+| 2. Chọn đối tượng cần quản lý. | |
+| | 3. Hiển thị dữ liệu tương ứng. |
+| 4. Thực hiện thêm, sửa, xóa hoặc tra cứu. | |
+| | 5. Kiểm tra dữ liệu. |
+| | 6. Lưu thay đổi. |
+| | 7. Hiển thị kết quả xử lý. |
+
+
+## Alternative Flow
+
+| Trường hợp | Xử lý |
+|---|---|
+| Không có quyền truy cập | Hệ thống từ chối thao tác. |
+| Dữ liệu không hợp lệ | Hệ thống thông báo lỗi và yêu cầu nhập lại. |
+# Bước 13: Acceptance Criteria (AC)
+
+Acceptance Criteria là tập hợp các điều kiện cụ thể để xác định một chức năng đã hoàn thành và có thể được nghiệm thu.
+
+| Mã AC | Liên kết UC | Tiêu chí nghiệm thu |
 |---|---|---|
-| **AC01** | BR01 | Khách hàng đăng ký thành công tài khoản mới, đăng nhập và cập nhật được thông tin[cite: 1]. |
-| **AC02** | BR02 | Tài xế cập nhật được hồ sơ, phương tiện, trạng thái và hệ thống lưu trữ chính xác[cite: 1]. |
-| **AC03** | BR03 | Khách hàng nhập đủ điểm đón, đến, loại xe và nhấn gửi thì hệ thống tạo yêu cầu thành công[cite: 1]. |
-| **AC04** | BR04 | Hệ thống quét tài xế gần nhất; nếu tài xế từ chối thì tự tìm người khác; nếu không có ai thì báo lỗi minh bạch[cite: 1]. |
-| **AC05** | BR05 | Tài xế nhận chuyến và cập nhật đủ 4 trạng thái: đã đến, đã đón, đang di chuyển, hoàn thành[cite: 1]. |
-| **AC06** | BR06 | Khách hàng xem được vị trí tài xế, tiến trình chuyến và thời gian đến dự kiến[cite: 1]. |
-| **AC07** | BR07 | Hệ thống tự tính đúng cước phí dựa trên loại dịch vụ khi chuyến hoàn thành[cite: 1]. |
-| **AC08** | BR08 | Khách hàng thanh toán được; nếu thanh toán điện tử lỗi bên thứ 3 thì thông báo và cho xử lý thanh toán lại[cite: 1]. |
+| **AC01** | UC01 | Người dùng có thể đăng ký tài khoản với thông tin hợp lệ và tài khoản được tạo thành công. |
+| **AC02** | UC02 | Người dùng có thể đăng nhập bằng thông tin tài khoản hợp lệ. |
+| **AC03** | UC03 | Người dùng có thể cập nhật thông tin cá nhân và dữ liệu mới được lưu thành công. |
+| **AC04** | UC04 | Thông tin phương tiện được tạo, cập nhật và quản lý đúng theo dữ liệu nhập vào. |
+| **AC05** | UC05 | Khách hàng nhập đầy đủ điểm đón, điểm đến, loại xe và tạo yêu cầu đặt chuyến thành công. |
+| **AC06** | UC06 | Hệ thống chỉ tìm kiếm các tài xế đang ở trạng thái sẵn sàng nhận chuyến. |
+| **AC07** | UC06 | Khi tài xế từ chối hoặc không phản hồi, hệ thống tiếp tục tìm tài xế khác. |
+| **AC08** | UC06 | Khi không có tài xế phù hợp, hệ thống thông báo cho khách hàng. |
+| **AC09** | UC07 | Tài xế có thể nhận hoặc từ chối chuyến xe. |
+| **AC10** | UC08 | Tài xế cập nhật được trạng thái chuyến xe theo đúng trình tự nghiệp vụ. |
+| **AC11** | UC09 | Khách hàng xem được trạng thái chuyến xe và thông tin tài xế. |
+| **AC12** | UC10 | Hệ thống tính được số tiền cần thanh toán sau khi chuyến xe hoàn thành. |
+| **AC13** | UC11 | Khách hàng thanh toán thành công và trạng thái giao dịch được cập nhật. |
+| **AC14** | UC11 | Khi thanh toán thất bại, hệ thống thông báo lỗi và cho phép thực hiện lại. |
+| **AC15** | UC12 | Hệ thống gửi thông báo đúng đối tượng khi có sự kiện phát sinh. |
+| **AC16** | UC13 | Khách hàng xem được lịch sử các chuyến xe đã hoàn thành. |
+| **AC17** | UC14 | Khách hàng có thể gửi đánh giá sau khi chuyến xe kết thúc. |
+| **AC18** | UC15 | Nhân viên vận hành thực hiện được các chức năng quản lý theo quyền được cấp. |
 
-### Bước 14: Ma trận truy xuất nguồn gốc yêu cầu (RTM)
 
-| BG | BR | FR | UC | AC |
+---
+
+# Bước 14: Requirement Traceability Matrix (RTM)
+
+Ma trận truy xuất yêu cầu giúp theo dõi mối liên hệ giữa:
+
+**Business Context → Business Requirement → Functional Requirement → Use Case → Acceptance Criteria**
+
+| BC | BR | FR | UC | AC |
 |---|---|---|---|---|
-| **BG01** | BR04 | FR09 – Tìm tài xế phù hợp | UC02 – Đặt chuyến xe | AC04 |
-| BG01 | BR04 | FR10 – Gửi yêu cầu nhận chuyến | UC02 – Đặt chuyến xe | AC04 |
-| BG01 | BR04 | FR11 – Xử lý tài xế không nhận chuyến | UC07 – Nhận/Từ chối chuyến xe | AC04 |
-| **BG02** | BR06 | FR16 – Theo dõi trạng thái chuyến | UC03 – Theo dõi chuyến xe | AC06 |
-| **BG03** | BR07 | FR19 – Tính số tiền phải trả | UC14 – Thanh toán chuyến xe | AC07 |
-| BG03 | BR08 | FR21 – Thanh toán điện tử | UC14 – Thanh toán chuyến xe | AC08 |
-| **BG05** | BR11 | FR29 – Quản lý chuyến đi | UC12 – Quản lý & giám sát chuyến xe | AC11 |
-| **BG01-05**| BR03 | FR07 – Nhập thông tin chuyến xe | UC02 – Đặt chuyến xe | AC03 |
-| BG01-05| BR05 | FR15 – Cập nhật trạng thái chuyến | UC08 – Cập nhật trạng thái chuyến xe | AC05 |
+| Hỗ trợ khách hàng sử dụng dịch vụ đặt xe trực tuyến | BR01 - Quản lý tài khoản khách hàng | FR01 - Đăng ký tài khoản | UC01 - Đăng ký tài khoản | AC01 |
+| Hỗ trợ khách hàng sử dụng dịch vụ đặt xe trực tuyến | BR01 - Quản lý tài khoản khách hàng | FR02 - Đăng nhập hệ thống | UC02 - Đăng nhập hệ thống | AC02 |
+| Hỗ trợ quản lý thông tin người dùng | BR01 - Quản lý tài khoản khách hàng | FR03 - Cập nhật thông tin cá nhân | UC03 - Quản lý thông tin cá nhân | AC03 |
+| Quản lý tài nguyên phục vụ chuyến xe | BR02 - Quản lý tài xế và phương tiện | FR04 - Quản lý hồ sơ tài xế | UC04 - Quản lý phương tiện | AC04 |
+| Quản lý tài nguyên phục vụ chuyến xe | BR02 - Quản lý tài xế và phương tiện | FR05 - Quản lý phương tiện | UC04 - Quản lý phương tiện | AC04 |
+| Hỗ trợ khách hàng đặt xe | BR03 - Đặt chuyến xe | FR07 - Nhập thông tin chuyến xe | UC05 - Đặt chuyến xe | AC05 |
+| Hỗ trợ khách hàng đặt xe | BR03 - Đặt chuyến xe | FR08 - Tạo yêu cầu đặt xe | UC05 - Đặt chuyến xe | AC05 |
+| Tự động hóa điều phối tài xế | BR04 - Tìm và phân công tài xế | FR09 - Tìm tài xế phù hợp | UC06 - Tìm và phân công tài xế | AC06 |
+| Tự động hóa điều phối tài xế | BR04 - Tìm và phân công tài xế | FR11 - Xử lý tài xế từ chối | UC06 - Tìm và phân công tài xế | AC07 |
+| Tự động hóa điều phối tài xế | BR04 - Tìm và phân công tài xế | FR12 - Thông báo không tìm được tài xế | UC06 - Tìm và phân công tài xế | AC08 |
+| Hỗ trợ tài xế thực hiện chuyến xe | BR05 - Tiếp nhận và thực hiện chuyến xe | FR13 - Nhận chuyến xe | UC07 - Nhận hoặc từ chối chuyến | AC09 |
+| Hỗ trợ tài xế thực hiện chuyến xe | BR05 - Tiếp nhận và thực hiện chuyến xe | FR15 - Cập nhật trạng thái chuyến | UC08 - Cập nhật trạng thái chuyến | AC10 |
+| Cung cấp khả năng theo dõi chuyến đi | BR06 - Theo dõi chuyến xe | FR16 - Theo dõi chuyến xe | UC09 - Theo dõi chuyến xe | AC11 |
+| Quản lý chi phí chuyến đi | BR07 - Tính cước chuyến xe | FR19 - Tính cước chuyến xe | UC10 - Tính cước chuyến xe | AC12 |
+| Hỗ trợ thanh toán dịch vụ | BR08 - Thanh toán chuyến xe | FR21 - Thanh toán điện tử | UC11 - Thanh toán chuyến xe | AC13 |
+| Hỗ trợ xử lý lỗi thanh toán | BR08 - Thanh toán chuyến xe | FR22 - Xử lý thanh toán thất bại | UC11 - Thanh toán chuyến xe | AC14 |
+| Cung cấp thông tin kịp thời | BR09 - Thông báo | FR23 - Gửi thông báo | UC12 - Gửi thông báo | AC15 |
+| Lưu trữ lịch sử sử dụng dịch vụ | BR10 - Lịch sử và đánh giá | FR24 - Xem lịch sử chuyến đi | UC13 - Xem lịch sử chuyến đi | AC16 |
+| Cải thiện chất lượng dịch vụ | BR10 - Lịch sử và đánh giá | FR25 - Đánh giá tài xế | UC14 - Đánh giá tài xế | AC17 |
+| Hỗ trợ quản lý vận hành | BR11 - Quản lý vận hành | FR26 - Quản lý khách hàng | UC15 - Quản lý vận hành | AC18 |
+| Hỗ trợ quản lý vận hành | BR11 - Quản lý vận hành | FR27 - Quản lý tài xế | UC15 - Quản lý vận hành | AC18 |
+| Hỗ trợ quản lý vận hành | BR11 - Quản lý vận hành | FR29 - Quản lý chuyến xe | UC15 - Quản lý vận hành | AC18 |
 
-### Bước 15: Kịch bản kiểm thử (Test Cases)
 
-| Mã TC | UC/AC Liên kết | Tên kịch bản kiểm thử | Các bước thực hiện | Kết quả mong đợi |
-|---|---|---|---|---|
-| **TC01** | UC02 / AC03 | Đặt chuyến thành công | 1. KH nhập điểm đón, điểm đến, chọn xe.<br>2. Bấm "Gửi yêu cầu đặt xe". | Hệ thống tiếp nhận yêu cầu, hiện màn hình "Đang tìm tài xế"[cite: 1]. |
-| **TC02** | UC02 / AC03 | Báo lỗi khi thiếu dữ liệu | 1. KH chỉ nhập điểm đón, bỏ trống điểm đến.<br>2. Bấm "Gửi yêu cầu". | Nút gửi bị vô hiệu hóa hoặc hệ thống cảnh báo lỗi bắt buộc nhập điểm đến. |
-| **TC03** | UC07 / AC04 | Xử lý khi tài xế từ chối chuyến | 1. Hệ thống gửi yêu cầu chuyến cho Tài xế A.<br>2. Tài xế A bấm "Từ chối". | Hệ thống tự động chuyển yêu cầu sang Tài xế B phù hợp tiếp theo mà không bắt khách tạo lại chuyến[cite: 1]. |
-| **TC04** | UC14 / AC08 | Xử lý thanh toán điện tử lỗi | 1. KH chọn thanh toán thẻ.<br>2. API đối tác trả về lỗi. | Hệ thống báo giao dịch thất bại và hiển thị tùy chọn cho phép xử lý lại theo chính sách[cite: 1]. |
-| **TC05** | UC08 / AC05 | Cập nhật hoàn thành hành trình | 1. Tài xế bấm "Hoàn thành chuyến". | App KH hiện trạng thái hoàn thành, chuyển sang luồng tính cước và đánh giá[cite: 1]. |
-```
-Bước 12: sau đó đặc tả usecase 
-Bước 13: Những tiêu chí chấp nhận, case ký hiệu là AC. Để tập hợp điều kiện quy tắc cụ thể mà 1 tính năng cần đáp ứng để giúp người làm phần mềm xác định khi nào người làm phần mềm cần kết thúc và nghiệm thu,
-bước 15: Truy xuất nguồn gốc yêu cầu, quá trình theo dõi yêu cầu tới bước  kiểm thử, tạo bảng ma trận truy xuất yêu cầu tên là RTM, sẽ có các cột: BC, BR, FR, UC, AC. cho biết BC nào tương ứng BR nào, BR nào phân rã FR nào, FR tương ứng AC nào khi kết thúc, điền cho đủ 5 cột
-Testcase đi từ phân tích thiết kế hệ thống
+---
+
