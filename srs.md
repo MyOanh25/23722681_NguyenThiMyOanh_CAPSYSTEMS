@@ -1,5 +1,3 @@
-# Phân tích thiết kế hệ thống MVB - CAB System
-
 # Bước 1: Đọc và phân tích sơ khởi yêu cầu khách hàng (Business Context)
 
 ## 1. Bối cảnh nghiệp vụ (Business Context)
